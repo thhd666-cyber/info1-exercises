@@ -1,0 +1,4 @@
+# 不要なPDFや作業用ファイルをGit管理から除外
+*.pdf
+.DS_Store
+Thumbs.db

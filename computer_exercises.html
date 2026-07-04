@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>コンピュータと2進法 演習問題システム</title>
+  <!-- Google Fonts: Inter & Outfit & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS変数によるデザインシステム定義 */
+    :root {
+      --bg-gradient-start: #0f172a;
+      --bg-gradient-end: #020617;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      --color-primary: #38bdf8;       /* ネオンブルー */
+      --color-primary-glow: rgba(56, 189, 248, 0.35);
+      --color-secondary: #c084fc;     /* ラベンダー */
+      --color-secondary-glow: rgba(192, 132, 252, 0.3);
+      --color-success: #4ade80;       /* エメラルド */
+      --color-success-glow: rgba(74, 222, 128, 0.2);
+      --color-error: #f87171;         /* コーラルレッド */
+      --color-error-glow: rgba(248, 113, 113, 0.2);
+      
+      --font-outfit: 'Outfit', 'Noto Sans JP', sans-serif;
+      --font-inter: 'Inter', 'Noto Sans JP', sans-serif;
+      
+      --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ライトテーマの上書き */
+    [data-theme="light"] {
+      --bg-gradient-start: #f8fafc;
+      --bg-gradient-end: #e2e8f0;
+      --card-bg: rgba(255, 255, 255, 0.75);
+      --card-border: rgba(15, 23, 42, 0.08);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      
+      --color-primary: #0284c7;
+      --color-primary-glow: rgba(2, 132, 199, 0.15);
+      --color-secondary: #7e22ce;
+      --color-secondary-glow: rgba(126, 34, 206, 0.1);
+      --color-success: #16a34a;
+      --color-success-glow: rgba(22, 163, 74, 0.1);
+      --color-error: #dc2626;
+      --color-error-glow: rgba(220, 38, 38, 0.1);
+      
+      --shadow-premium: 0 8px 32px 0 rgba(148, 163, 184, 0.18);
+    }
+
+    /* 基本リセット & アニメーション背景 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-main);
+      font-family: var(--font-inter);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 2rem 1rem;
+      position: relative;
+      transition: background 0.5s ease, color 0.3s ease;
+    }
+
+    /* 背景の光るオーブ（装飾） */
+    .bg-orbs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.15;
+      animation: float 20s infinite alternate ease-in-out;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: var(--color-primary);
+      top: -100px;
+      right: -100px;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: var(--color-secondary);
+      bottom: -150px;
+      left: -150px;
+      animation-duration: 25s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 50px) scale(1.1); }
+    }
+
+    /* コンテナ */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* ヘッダーエリア */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand h1 {
+      font-family: var(--font-outfit);
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+
+    .brand p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* コントロールボタン群 */
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition-smooth);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .btn:hover {
+      background: var(--color-primary-glow);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--color-primary-glow);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: #0f172a;
+      border: none;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: #7dd3fc;
+      color: #0f172a;
+      box-shadow: 0 4px 15px var(--color-primary-glow);
+    }
+
+    /* ダッシュボード (進捗状況) */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .dash-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      box-shadow: var(--shadow-premium);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: var(--transition-smooth);
+    }
+
+    .dash-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .dash-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: var(--color-primary-glow);
+      color: var(--color-primary);
+    }
+
+    .dash-card.success .dash-icon {
+      background: var(--color-success-glow);
+      color: var(--color-success);
+    }
+
+    .dash-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dash-value {
+      font-family: var(--font-outfit);
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .dash-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* セクションナビゲーション */
+    .section-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+      padding: 0.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+    }
+
+    .selector-tab {
+      flex: 1;
+      min-width: 160px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: var(--transition-smooth);
+      text-align: center;
+    }
+
+    .selector-tab:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .selector-tab.active {
+      color: #0f172a;
+      background: var(--color-primary);
+      font-weight: 600;
+      box-shadow: 0 4px 12px var(--color-primary-glow);
+    }
+    
+    [data-theme="light"] .selector-tab.active {
+      color: #ffffff;
+      background: var(--color-primary);
+    }
+
+    /* メインコンテンツレイアウト */
+    .content-area {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    /* 問題カード */
+    .quiz-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow-premium);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      margin-bottom: 1.5rem;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quiz-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--color-primary);
+      opacity: 0.8;
+    }
+
+    .quiz-card.completed::before {
+      background: var(--color-success);
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .quiz-badge {
+      background: var(--color-primary-glow);
+      color: var(--color-primary);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .quiz-number {
+      font-family: var(--font-outfit);
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .quiz-question {
+      font-size: 1.2rem;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+      color: var(--text-main);
+    }
+
+    /* 選択肢オプション */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .option-label {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.1rem 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: var(--transition-smooth);
+      position: relative;
+    }
+
+    .option-label:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .option-radio {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--text-muted);
+      border-radius: 50%;
+      outline: none;
+      transition: var(--transition-smooth);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .option-radio:checked {
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+    }
+
+    .option-radio:checked::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #0f172a;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .option-text {
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    /* 記述解答入力 */
+    .input-container {
+      position: relative;
+      margin-bottom: 1.5rem;
+      max-width: 500px;
+    }
+
+    .text-input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      color: var(--text-main);
+      font-size: 1.05rem;
+      font-family: var(--font-inter);
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .text-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 15px var(--color-primary-glow);
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    /* アクションエリア */
+    .action-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    /* フィードバック (正誤表示) */
+    .feedback-message {
+      display: none;
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .feedback-message.correct {
+      display: block;
+      background: var(--color-success-glow);
+      border: 1px solid var(--color-success);
+      color: var(--color-success);
+    }
+
+    .feedback-message.incorrect {
+      display: block;
+      background: var(--color-error-glow);
+      border: 1px solid var(--color-error);
+      color: var(--color-error);
+    }
+
+    .feedback-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* 解説アコーディオン */
+    .explanation-box {
+      margin-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .explanation-box h4 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--color-secondary);
+    }
+
+    /* コラムや図表の装飾 */
+    .diagram-box {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 0.75rem 0;
+      font-family: monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+    }
+
+    /* 対照表用の特別レイアウト */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .comparison-table th {
+      background: rgba(255, 255, 255, 0.05);
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table-input {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 0.3rem 0.5rem;
+      color: var(--text-main);
+      width: 120px;
+      font-family: monospace;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .table-input:focus {
+      border-color: var(--color-primary);
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    /* ビジュアル木構造 (2進変換の割り算プロセス用) */
+    .tree-step {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.25rem;
+      font-family: monospace;
+    }
+
+    .tree-divide {
+      color: var(--color-primary);
+      margin-right: 0.5rem;
+    }
+
+    .tree-rem {
+      color: var(--color-secondary);
+      margin-left: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* アニメーション */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* フッター */
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* 復習モードトグル用 */
+    .mode-switch-active {
+      border-color: var(--color-secondary) !important;
+      box-shadow: 0 0 15px var(--color-secondary-glow);
+    }
+
+    /* 画面切り替え時のスムーズ表示 */
+    .hidden {
+      display: none !important;
+    }
+
+    /* モード固有の進行状況表示 */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+      border-radius: 3px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* レスポンシブ調整 */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
+      .quiz-card {
+        padding: 1.5rem;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .selector-tab {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 背景デコレーション -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <div class="container">
+    <!-- ヘッダー -->
+    <header>
+      <div class="brand">
+        <h1>CS & Binary Exercises</h1>
+        <p>コンピュータ構成要素・2進法 総合演習システム</p>
+      </div>
+      <div class="controls">
+        <button class="btn" id="themeToggleBtn" onclick="toggleTheme()">
+          ☀️ Mode
+        </button>
+        <button class="btn" id="resetProgressBtn" onclick="resetProgress()">
+          🔄 進捗リセット
+        </button>
+        <button class="btn btn-primary" id="toggleModeBtn" onclick="toggleViewMode()">
+          🗂️ 1問ずつ解く
+        </button>
+      </div>
+    </header>
+
+    <!-- ダッシュボード -->
+    <section class="dashboard">
+      <div class="dash-card">
+        <div class="dash-icon">🎯</div>
+        <div class="dash-info">
+          <div class="dash-value" id="dashTotalCount">0 / 0</div>
+          <div class="dash-label">解答済み問題数</div>
+        </div>
+      </div>
+      <div class="dash-card success">
+        <div class="dash-icon">📈</div>
+        <div class="dash-info">
+          <div class="dash-value" id="dashAccuracy">0%</div>
+          <div class="dash-label">正答率 (既解答中)</div>
+        </div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-icon">⚡</div>
+        <div class="dash-info">
+          <div class="dash-value" id="dashTotalScore">0</div>
+          <div class="dash-label">獲得スコア</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 進捗バー (1問ずつ解くモード用) -->
+    <div class="progress-bar-container hidden" id="cardProgressBarContainer">
+      <div class="progress-bar" id="cardProgressBar"></div>
+    </div>
+
+    <!-- カテゴリタブセレクター -->
+    <div class="section-selector" id="sectionSelector">
+      <button class="selector-tab active" onclick="switchCategory('all')">全範囲</button>
+      <button class="selector-tab" onclick="switchCategory('basic')">1. コンピュータ構成要素</button>
+      <button class="selector-tab" onclick="switchCategory('conversion')">2. n進法の基礎・変換</button>
+      <button class="selector-tab" onclick="switchCategory('operation')">3. 2進数の加減乗除</button>
+      <button class="selector-tab" onclick="switchCategory('complement')">4. 補数表記と整数</button>
+    </div>
+
+    <!-- 問題リストエリア -->
+    <main class="content-area" id="quizContainer">
+      <!-- JavaScriptで動的生成 -->
+    </main>
+
+    <!-- 1問ずつモード用のナビゲーション -->
+    <div class="action-row hidden" id="cardNavRow" style="justify-content: space-between; margin-bottom: 2rem;">
+      <button class="btn" id="prevCardBtn" onclick="navigateCard(-1)">◀ 前の問題</button>
+      <span style="align-self: center; font-weight: 500;" id="cardPositionIndicator">1 / 10</span>
+      <button class="btn" id="nextCardBtn" onclick="navigateCard(1)">次の問題 ▶</button>
+    </div>
+
+    <!-- フッター -->
+    <footer>
+      <p>© 2026 情報Ⅰ 学習サポートシステム | 範囲: コンピュータ解説書(p.1-p.33) & 2進法演習問題1</p>
+    </footer>
+  </div>
+
+  <script>
+    // 演習問題データベース (全38問)
+    const quizDatabase = [
+      // === カテゴリ1: コンピュータの構成要素と装置 ===
+      {
+        id: "q1",
+        category: "basic",
+        type: "choice",
+        question: "コンピュータを構成する物理的な機械や電子回路である「ハードウェア」に対し、それを動作させるプログラムやデータの集まりを何と呼びますか？",
+        options: ["オペレーティングシステム (OS)", "アプリケーションソフト", "ソフトウェア", "データベース"],
+        answer: "ソフトウェア",
+        explanation: "コンピュータは、物理的な実体である「ハードウェア」と、コンピュータに指示を与えるプログラムやデータである「ソフトウェア」が組み合わさって初めて動作します。"
+      },
+      {
+        id: "q2",
+        category: "basic",
+        type: "choice",
+        question: "ソフトウェアは大きく2つに分類されます。キーボードやマウスなどのハードウェアを制御し、基本機能を提供するソフトウェアを何と呼びますか？",
+        options: ["オペレーティングシステム (OS)", "アプリケーションソフトウェア", "デバイスドライバ", "ミドルウェア"],
+        answer: "オペレーティングシステム (OS)",
+        explanation: "ソフトウェアは、基本ソフトウェアである「オペレーティングシステム(OS)」と、特定の目的（文書作成、Web閲覧など）のために使う「アプリケーションソフトウェア」に分類されます。"
+      },
+      {
+        id: "q3",
+        category: "basic",
+        type: "text",
+        question: "コンピュータが物理的に信号を処理するとき、10段階の細かな電圧（10進数）ではなく、オンとオフ（2進数）の2状態だけでデータを表現する最も大きな技術的理由は何ですか？（簡潔に答えなさい）",
+        answer: "ノイズに強く誤りが生じにくいため",
+        keywords: ["ノイズ", "電圧", "変動", "安定", "区別", "誤り", "間違い", "確実"],
+        explanation: "電圧の細かな変化はノイズ（電圧のふらつき）の影響を受けやすく、データに誤りが生じやすくなります。オンとオフの2つであれば電圧が多少ふらついても容易に区別できるため、ノイズに強く非常に安定して動作させることができます。"
+      },
+      {
+        id: "q4",
+        category: "basic",
+        type: "choice",
+        question: "2進数の「0」と「1」の電気的状態は、コンピュータ内部の電子回路におけるどのような物理的状態に対応していますか？",
+        options: ["電気抵抗 of 大小", "スイッチの「オフ」と「オン」の状態", "電磁波の周波数の高低", "電気の流れる向き"],
+        answer: "スイッチの「オフ」と「オン」の状態",
+        explanation: "2進数は電子回路におけるスイッチのON/OFF（電流が流れているか流れていないか）を直接「1」と「0」に割り当てて表現しています。これにより電子回路がそのまま論理演算を行えます。"
+      },
+      {
+        id: "q5",
+        category: "basic",
+        type: "text",
+        question: "コンピュータのハードウェアで、データやプログラムを一時的に保存し、CPUが直接かつ高速にアクセスできる「メモリ」の正式名称は何ですか？（漢字で答えなさい）",
+        answer: "主記憶装置",
+        keywords: ["主記憶装置"],
+        explanation: "記憶装置は、CPUが直接読み書きを行う高速な「主記憶装置(メモリ)」と、電源を切ってもデータを長期間保存できる「補助記憶装置(ストレージ: SSDやHDDなど)」の2つに大別されます。"
+      },
+      {
+        id: "q6",
+        category: "basic",
+        type: "choice",
+        question: "いわゆる「コンピュータの五大装置」のうち、中央処理装置（CPU）の内部に含まれる2つの装置の組み合わせとして正しいものはどれですか？",
+        options: ["入力装置 と 出力装置", "主記憶装置 と 補助記憶装置", "制御装置 と 演算装置", "制御装置 と 記憶装置"],
+        answer: "制御装置 と 演算装置",
+        explanation: "CPU (Central Processing Unit: 中央処理装置) は、各構成要素へ命令を送る「制御装置」と、データの加算や比較を行う「演算装置」の2大機能を1つの半導体チップ上に備えています。"
+      },
+      {
+        id: "q7",
+        category: "basic",
+        type: "text",
+        question: "コンピュータ内でデータが処理される際の基本的なデータフロー（流れ）について、空欄に当てはまる装置名を順に答えなさい。<br><b>入力装置 → [ (1) ] → [ (2) ] → [ (1) ] → 出力装置</b><br>(※(1)と(2)に入る装置名を「主記憶装置, CPU」のようにカンマで区切って答えなさい)",
+        answer: "主記憶装置, CPU",
+        keywords: ["主記憶", "メモリ", "cpu", "中央処理"],
+        explanation: "すべてのデータは、一度「主記憶装置(メモリ)」に格納されます。CPUがそのメモリから命令やデータを読み込んで「処理（演算）」し、その結果を再度メモリに書き戻し、最終的に「出力装置」へ送られます。<br>したがって流れは<b>「入力装置 → メモリ(主記憶装置) → CPU → メモリ(主記憶装置) → 出力装置」</b>となります。"
+      },
+      {
+        id: "q8",
+        category: "basic",
+        type: "text",
+        question: "2進数の最小のデータ単位を「ビット (bit)」と呼びますが、このビットを8個集めた（8ビット）データ量の基本単位の名前を答えなさい。",
+        answer: "バイト",
+        keywords: ["バイト", "byte"],
+        explanation: "1ビット(bit)は0か1の2つの状態を表します。これが8個集まった「1バイト(byte = 8ビット)」は、2の8乗である256通りの情報を表すことができます。"
+      },
+      {
+        id: "q9",
+        category: "basic",
+        type: "choice",
+        question: "OS (基本ソフトウェア) の役割として誤っているものはどれですか？",
+        options: [
+          "メモリ領域を管理し、複数のプログラムが衝突しないように制御する",
+          "文書を作成したり、写真の編集をしたりしてユーザーの目的を直接達成する",
+          "アプリケーションプログラムに対して統一的な操作インターフェース (API) を提供する",
+          "キーボードやディスプレイなどの外部機器 (ハードウェア) を管理・コントロールする"
+        ],
+        answer: "文書を作成したり、写真の編集をしたりしてユーザーの目的を直接達成する",
+        explanation: "文書作成や写真編集など、特定の業務・作業を直接行うのは「アプリケーションソフト」の役割です。OSは、そうしたアプリが安定して動作するためのハードウェア管理や画面描画支援などの基盤的サービスを提供します。"
+      },
+      {
+        id: "q10",
+        category: "basic",
+        type: "choice",
+        question: "解説書p.3にある「コンピュータ」という言葉の語源である英語「computer」の本来の意味はどれですか？",
+        options: ["考えるもの", "計算するもの", "電気を通すもの", "記録するもの"],
+        answer: "計算するもの",
+        explanation: "「computer」は「compute(計算する)」に「-er(〜するもの)」が付いた言葉で、本来は「計算機（あるいは計算手＝計算する人）」という意味を持っています。"
+      },
+
+      // === カテゴリ2: n進法の相互変換 ===
+      {
+        id: "q11",
+        category: "conversion",
+        type: "text",
+        question: "10進数の「3」を2進数で表しなさい。",
+        answer: "11",
+        explanation: "10進数の3を2進数にするには、3 = 2^1 + 2^0 = 2 + 1 なので、2の位が1、1の位が1となり、<b>11</b>となります。<br>割り算の筆算：3 ÷ 2 = 1 余り 1、商の1をさらに2で割って0 余り 1。下から余りを並べて 11 となります。"
+      },
+      {
+        id: "q12",
+        category: "conversion",
+        type: "text",
+        question: "2進数の「101」を10進数に変換しなさい。",
+        answer: "5",
+        explanation: "2進数の101は、左から順に「4の位」「2の位」「1の位」です。<br>1×2^2 + 0×2^1 + 1×2^0 = 4 + 0 + 1 = <b>5</b> となります。"
+      },
+      {
+        id: "q13",
+        category: "conversion",
+        type: "text",
+        question: "2進数の「101101」を10進数に変換しなさい。",
+        answer: "45",
+        explanation: "各桁の重みを足し合わせます：<br>101101(2) = 1×2^5 + 0×2^4 + 1×2^3 + 1×2^2 + 0×2^1 + 1×2^0 = 32 + 0 + 8 + 4 + 0 + 1 = <b>45</b>"
+      },
+      {
+        id: "q14",
+        category: "conversion",
+        type: "text",
+        question: "2進数の小数「0.01」を10進数に変換しなさい。",
+        answer: "0.25",
+        explanation: "2進数の小数は、小数第1位が 2^-1 = 0.5、小数第2位が 2^-2 = 0.25、小数第3位が 2^-3 = 0.125 の重みを持ちます。<br>0.01(2) = 0×0.5 + 1×0.25 = <b>0.25</b> となります。"
+      },
+      {
+        id: "q15",
+        category: "conversion",
+        type: "text",
+        question: "2進数の「0.1111」を10進数に変換しなさい。",
+        answer: "0.9375",
+        explanation: "各桁の重みを足します：<br>0.1111(2) = 1×2^-1 + 1×2^-2 + 1×2^-3 + 1×2^-4 = 0.5 + 0.25 + 0.125 + 0.0625 = <b>0.9375</b>"
+      },
+      {
+        id: "q16",
+        category: "conversion",
+        type: "text",
+        question: "10進数の「0.9375」を2進数の小数に変換しなさい。",
+        answer: "0.1111",
+        explanation: "小数部分に2を掛け続け、整数部分を取り出していきます：<br>0.9375 × 2 = 1.875 → 整数部 <b>1</b>、小数部 0.875<br>0.875 × 2 = 1.75 → 整数部 <b>1</b>、小数部 0.75<br>0.75 × 2 = 1.5 → 整数部 <b>1</b>、小数部 0.5<br>0.5 × 2 = 1.0 → 整数部 <b>1</b>、小数部 0.0 (終了)<br>取り出した整数部を上から順に並べて <b>0.1111</b> となります。"
+      },
+      {
+        id: "q17",
+        category: "conversion",
+        type: "text",
+        question: "10進数の「100.5625」を2進数に変換しなさい。",
+        answer: "1100100.1001",
+        explanation: "整数部分(100)と小数部分(0.5625)を分けて変換します：<br>【整数部 100】<br>100 ÷ 2 = 50 余り 0<br>50 ÷ 2 = 25 余り 0<br>25 ÷ 2 = 12 余り 1<br>12 ÷ 2 = 6 余り 0<br>6 ÷ 2 = 3 余り 0<br>3 ÷ 2 = 1 余り 1<br>1 ÷ 2 = 0 余り 1<br>下から順に並べて 1100100(2)<br>【小数部 0.5625】<br>0.5625 × 2 = 1.125 → 1<br>0.125 × 2 = 0.25 → 0<br>0.25 × 2 = 0.5 → 0<br>0.5 × 2 = 1.0 → 1<br>上から順に並べて 0.1001(2)<br>合わせると <b>1100100.1001</b> となります。"
+      },
+      {
+        id: "q18",
+        category: "conversion",
+        type: "text",
+        question: "10進数の「0.6」を2進数の小数に変換しなさい。ただし、無限小数になるため、小数点以下第5位で計算を打ち切り、そこまでで答えなさい。",
+        answer: "0.10011",
+        explanation: "小数部分に2を掛けます：<br>0.6 × 2 = 1.2 → 1 (残 0.2)<br>0.2 × 2 = 0.4 → 0 (残 0.4)<br>0.4 × 2 = 0.8 → 0 (残 0.8)<br>0.8 × 2 = 1.6 → 1 (残 0.6)<br>0.6 × 2 = 1.2 → 1 (第5位)<br>上から並べて <b>0.10011</b> となります。（この後は0011が循環する無限小数になります）"
+      },
+      {
+        id: "q19",
+        category: "conversion",
+        type: "text",
+        question: "2進数の「1010」を16進数に変換しなさい。",
+        answer: "A",
+        explanation: "2進数の 1010 は 10進数で 10 です。16進数では 10〜15 を A〜F のアルファベットで表すため、10 は <b>A</b> となります。"
+      },
+      {
+        id: "q20",
+        category: "conversion",
+        type: "text",
+        question: "2進数の「1101」を16進数に変換しなさい。",
+        answer: "D",
+        explanation: "2進数 1101 は 10進数で 13 (8 + 4 + 1) です。16進数では 10=A, 11=B, 12=C, 13=D なので、<b>D</b> となります。"
+      },
+      {
+        id: "q21",
+        category: "conversion",
+        type: "text",
+        question: "16進数の「F9」の次の値（F9に1を足した数）は16進数で何ですか？",
+        answer: "FA",
+        explanation: "16進数は 0〜9, A, B, C, D, E, F と続きます。したがって、「9」の次は「A」になるため、F9の次は <b>FA</b> となります。"
+      },
+      {
+        id: "q22",
+        category: "conversion",
+        type: "text",
+        question: "16進数の「100」より「2」小さい値は16進数で何ですか？",
+        answer: "FE",
+        explanation: "16進数で桁下がりを考えします：<br>100(16) - 1(10) = FF(16)<br>FF(16) - 1(10) = <b>FE</b>(16)<br>10進数で考えると 256 - 2 = 254 です。254を16進数に変換すると 254 = 15×16 + 14 = F E(16) と一致します。"
+      },
+      {
+        id: "q23",
+        category: "conversion",
+        type: "text",
+        question: "16進数の「1000」より「1」小さい値は16進数で何ですか？",
+        answer: "FFF",
+        explanation: "10進数において「1000」の1つ前が「999」であるのと同様に、16進数における「1000(16)」の1つ前の値は、すべての桁が16進数の最大文字であるFになった <b>FFF</b> となります。"
+      },
+      {
+        id: "q24",
+        category: "conversion",
+        type: "choice",
+        question: "桁数の多い2進数を16進数に素早く変換する正しいルールはどれですか？",
+        options: [
+          "右へ向かって、3桁ごとに区切ってそれぞれを16進数にする",
+          "右（端の桁）から左へ向かって、4桁ごとに区切ってそれぞれを16進数にする。足りない左端には0を補う",
+          "左（最大桁）から右へ向かって、4桁ごとに区切り、足りない右端には1を補う",
+          "2進数を一度すべて10進数に直してから、16で割り算し直す以外の方法はない"
+        ],
+        answer: "右（端の桁）から左へ向かって、4桁ごとに区切ってそれぞれを16進数にする。足りない左端には0を補う",
+        explanation: "16進数の1桁は2進数の4ビット（16=2^4）に完全に対応します。そのため、2進数の右端（一の位）から4桁ずつ区切って変換していけば、簡単に16進数へと変換できます。桁が足りない場合は左端に0を補います。"
+      },
+
+      // === カテゴリ3: 2進数の加減乗除 ===
+      {
+        id: "q25",
+        category: "operation",
+        type: "text",
+        question: "2進数の加算： <b>1101(2) + 1111(2)</b> を計算し、2進数で答えなさい。",
+        answer: "11100",
+        explanation: "筆算で計算します：<br><pre>  1111  (繰り上がり)<br>  1101<br>+ 1111<br>------<br> 11100(2)</pre><br>10進数で検算すると：13 + 15 = 28。28を2進数にすると 16+8+4 = <b>11100</b>(2) となり一致します。"
+      },
+      {
+        id: "q26",
+        category: "operation",
+        type: "text",
+        question: "2進数の減算： <b>11011(2) - 1111(2)</b> を計算し、2進数で答えなさい。",
+        answer: "1100",
+        explanation: "筆算で計算します（繰り下がりに注意）：<br><pre>  11011<br>-  1111<br>-------<br>  01100(2) → 1100(2)</pre><br>10進数で検算すると：27 - 15 = 12。12を2進数にすると 8+4 = <b>1100</b>(2) となり一致します。"
+      },
+      {
+        id: "q27",
+        category: "operation",
+        type: "text",
+        question: "2進数の乗算： <b>1101(2) × 1111(2)</b> を計算し、2進数で答えなさい。",
+        answer: "11000011",
+        explanation: "筆算で計算します：<br><pre>    1101<br>  × 1111<br>  ------<br>    1101<br>   1101<br>  1101<br>+1101<br>--------<br>11000011(2)</pre><br>10進数で検算：13 × 15 = 195。195 = 128+64+2+1 = <b>11000011</b>(2) となり一致します。"
+      },
+      {
+        id: "q28",
+        category: "operation",
+        type: "text",
+        question: "2進数の除算： <b>110110(2) ÷ 1010(2)</b> を計算し、商と余りを求めなさい。<br>(※解答は「商 余り」のようにスペースで区切るか、「商...余り」のように書いてください。例：101 余り 100)",
+        answer: "101余り100",
+        keywords: ["101", "100", "余り", "あまり", "商"],
+        explanation: "10進数に直して考えるとわかりやすいです：<br>110110(2) = 54(10)<br>1010(2) = 10(10)<br>54 ÷ 10 = 5 余り 4<br>商 5 を2進数に直すと <b>101</b>(2)、余り 4 を2進数に直すと <b>100</b>(2) となります。<br>したがって、答えは <b>商 101 余り 100</b> です。"
+      },
+      {
+        id: "q29",
+        category: "operation",
+        type: "text",
+        question: "2進数の加算： <b>101101(2) + 100110(2)</b> を計算し、2進数で答えなさい。",
+        answer: "1010011",
+        explanation: "筆算で計算します：<br><pre>  101101<br>+ 100110<br>-------<br> 1010011(2)</pre><br>10進数で検算：45 + 38 = 83。83 = 64 + 16 + 2 + 1 = <b>1010011</b>(2) となり一致します。"
+      },
+      {
+        id: "q30",
+        category: "operation",
+        type: "text",
+        question: "2進数の乗算： <b>111011(2) × 10101(2)</b> を計算し、2進数で答えなさい。",
+        answer: "10011010111",
+        explanation: "10進数で計算して変換すると確実です：<br>111011(2) = 32+16+8+2+1 = 59(10)<br>10101(2) = 16+4+1 = 21(10)<br>59 × 21 = 1239(10)<br>1239を2進数に変換します：<br>1239 = 1024 + 128 + 64 + 16 + 4 + 2 + 1<br>= 2^10 + 2^7 + 2^6 + 2^4 + 2^2 + 2^1 + 2^0<br>= <b>10011010111</b>(2)"
+      },
+
+      // === カテゴリ4: 補数表記と符号付き整数 ===
+      {
+        id: "q31",
+        category: "complement",
+        type: "text",
+        question: "8ビットの2進数で、負の数を表す「2の補数表記」を使用します。この表記において、10進数の「50」を8ビットの2進数で表現しなさい。",
+        answer: "00110010",
+        explanation: "正の数「50」は、符号ビット（最上位ビット）を0にして、そのまま2進数で表現します。<br>50 = 32 + 16 + 2 = 00110010(2) です。8ビット幅に合わせるため、左側を0で埋めて <b>00110010</b> となります。"
+      },
+      {
+        id: "q32",
+        category: "complement",
+        type: "text",
+        question: "8ビットの2の補数表記において、10進数の「-50」を2進数で表現しなさい。",
+        answer: "11001110",
+        explanation: "負の数を求める手順：<br>1. 「+50」の8ビット表現 <b>00110010</b> を用意する。<br>2. 全ビットを反転させる → <b>11001101</b><br>3. 最下位に 1 を加える → <b>11001110</b><br>これにより、10進数の「-50」は2の補数表現で <b>11001110</b> となります。"
+      },
+      {
+        id: "q33",
+        category: "complement",
+        type: "text",
+        question: "8ビットの2の補数表記で表現された2進数「11110000」は、10進数で表すといくつですか？",
+        answer: "-16",
+        explanation: "最上位ビットが「1」なので負の数です。元の絶対値を知るために、逆の操作（2の補数を求める）を行います：<br>1. 「11110000」をビット反転 → <b>00001111</b><br>2. 1 を加える → <b>00010000</b><br>3. この 00010000(2) は10進数で「16」です。<br>したがって、元の数は負の数なので <b>-16</b> となります。"
+      },
+      {
+        id: "q34",
+        category: "complement",
+        type: "choice",
+        question: "8ビットの2進数を「符号付き整数（2の補数表記）」として表現したとき、表すことができる値の「最大値」と「最小値」の組み合わせとして正しいものはどれですか？（10進数で答えなさい）",
+        options: [
+          "最大値：128、最小値：-128",
+          "最大値：127、最小値：-128",
+          "最大値：127、最小値：-127",
+          "最大値：255、最小値：0"
+        ],
+        answer: "最大値：127、最小値：-128",
+        explanation: "8ビットの符号付き整数では：<br>正の最大値は最上位（符号ビット）が0で他がすべて1の 01111111(2) = <b>+127</b> です。<br>負の最小値は符号ビットが1で他がすべて0の 10000000(2) = <b>-128</b> となります。<br>0が1通りに統一されているため、負の数の方が1つ多く表現できます。"
+      },
+      {
+        id: "q35",
+        category: "complement",
+        type: "choice",
+        question: "8ビットの2進数を「符号なし整数（正の数のみ）」として表現したとき、表すことができる値の範囲（最小値〜最大値）はどれですか？",
+        options: [
+          "-128 〜 127",
+          "0 〜 255",
+          "0 〜 256",
+          "-255 〜 255"
+        ],
+        answer: "0 〜 255",
+        explanation: "符号なし整数の場合、8ビット全てを数値として使います。<br>最小値はすべて0の `00000000` = <b>0</b><br>最大値はすべて1の `11111111` = 2^8 - 1 = <b>255</b> です。"
+      },
+      {
+        id: "q36",
+        category: "complement",
+        type: "choice",
+        question: "12ビットの2の補数表現において、2進数「111111111111(2)」と「100000000000(2)」ではどちらが小さいですか？",
+        options: [
+          "111111111111(2) の方が小さい",
+          "100000000000(2) の方が小さい",
+          "両方とも同じ値である"
+        ],
+        answer: "100000000000(2) の方が小さい",
+        explanation: "12ビットの補数表現において：<br>`111111111111(2)` は <b>-1</b> を表します（ビット反転して1を加えると 000000000001 となるため）。<br>`100000000000(2)` は 12ビットの表現における最小値である <b>-2048</b> を表します。<br>よって、-2048 である `100000000000(2)` の方が圧倒的に小さいです。"
+      },
+      {
+        id: "q37",
+        category: "complement",
+        type: "text",
+        question: "8ビットの2の補数表現を用いて、10進数の減算「<b>80 - 20</b>」を加算に直して計算します。<br>この時、引く数「20」を2の補数表現（8ビット）に直した値を答えなさい。",
+        answer: "11101100",
+        explanation: "20 の8ビット2進数表現は 00010100(2) です。<br>1. ビットを反転：11101011<br>2. 1を加算：<b>11101100</b><br>これが「-20」を表す2の補数です。コンピュータはこの補数を80(01010000)に足すことで減算を実現します。"
+      },
+      {
+        id: "q38",
+        category: "complement",
+        type: "text",
+        question: "8ビットの2の補数表現において、<b>20(10) - 80(10)</b> を加算形式「20(10) + (-80(10))」で計算します。<br>結果となる8ビットの2進数（2の補数表現）を答えなさい。",
+        answer: "11000100",
+        explanation: "手順は以下の通りです：<br>1. 20(10) を2進数にする → <b>00010100</b><br>2. -80(10) の2の補数を求める。<br>   +80(10) = 01010000 → 反転：10101111 → +1：<b>10110000</b><br>3. 2つを加算する：<br>   00010100 + 10110000 = <b>11000100</b><br>(※10進数で検算すると 20 - 80 = -60。11000100 を負の数としてデコードすると、反転して+1して 00111100(2) = 60となり、確かに -60 を表していることが分かります。)"
+      }
+    ];
+
+    // 対照表問題の正しい対応関係 (q_table 用)
+    const tableAnswers = {
+      t127: "01111111",
+      t64: "01000000",
+      t32: "00100000",
+      t16: "00010000",
+      t8: "00001000",
+      t4: "00000100",
+      t2: "00000010",
+      t1: "00000001",
+      t0: "00000000",
+      tm1: "11111111",
+      tm2: "11111110",
+      tm4: "11111100",
+      tm8: "11111000",
+      tm16: "11110000",
+      tm32: "11100000",
+      tm64: "11000000",
+      tm128: "10000000"
+    };
+
+    // アプリケーションの状態管理
+    let currentCategory = 'all';
+    let viewMode = 'list'; // 'list' または 'card'
+    let currentCardIndex = 0;
+    let filteredQuestions = [...quizDatabase];
+    
+    // 進捗データ (localStorage用)
+    let userProgress = {
+      completedAnswers: {}, // { questionId: { isCorrect: boolean, userAnswer: string } }
+      tableAnswers: {},      // { cellId: userAnswer }
+      score: 0
+    };
+
+    // 起動時の初期化
+    window.addEventListener('DOMContentLoaded', () => {
+      loadProgress();
+      initTheme();
+      renderQuiz();
+      updateDashboard();
+    });
+
+    // テーマ切り替え
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      document.getElementById('themeToggleBtn').innerHTML = savedTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      document.getElementById('themeToggleBtn').innerHTML = next === 'dark' ? '☀️ Light' : '🌙 Dark';
+    }
+
+    // ビューモード切り替え (一覧 / 1問ずつ)
+    function toggleViewMode() {
+      viewMode = viewMode === 'list' ? 'card' : 'list';
+      document.getElementById('toggleModeBtn').innerHTML = viewMode === 'list' ? '🗂️ 1問ずつ解く' : '📋 一覧で解く';
+      
+      const progressBar = document.getElementById('cardProgressBarContainer');
+      const navRow = document.getElementById('cardNavRow');
+      const selector = document.getElementById('sectionSelector');
+      
+      if (viewMode === 'card') {
+        progressBar.classList.remove('hidden');
+        navRow.classList.remove('hidden');
+        selector.classList.add('hidden'); // 1問ずつモードの時はカテゴリフィルターを非表示か、固定
+        currentCardIndex = 0;
+      } else {
+        progressBar.classList.add('hidden');
+        navRow.classList.add('hidden');
+        selector.classList.remove('hidden');
+      }
+      renderQuiz();
+    }
+
+    // カテゴリフィルター切り替え
+    function switchCategory(cat) {
+      currentCategory = cat;
+      const tabs = document.querySelectorAll('.selector-tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      
+      // ボタンのアクティブ化
+      const activeTab = Array.from(tabs).find(tab => {
+        if (cat === 'all') return tab.textContent.includes('全範囲');
+        if (cat === 'basic') return tab.textContent.includes('1.');
+        if (cat === 'conversion') return tab.textContent.includes('2.');
+        if (cat === 'operation') return tab.textContent.includes('3.');
+        if (cat === 'complement') return tab.textContent.includes('4.');
+      });
+      if (activeTab) activeTab.classList.add('active');
+
+      if (cat === 'all') {
+        filteredQuestions = [...quizDatabase];
+      } else {
+        filteredQuestions = quizDatabase.filter(q => q.category === cat);
+      }
+      
+      currentCardIndex = 0;
+      renderQuiz();
+    }
+
+    // 1問ずつモード用のカードナビゲーション
+    function navigateCard(direction) {
+      const nextIndex = currentCardIndex + direction;
+      // 対照表問題も含めるため、filteredQuestions.length + 1が上限（補数カテゴリにいる場合のみ対照表を末尾に追加）
+      let totalItems = filteredQuestions.length;
+      const showTable = (currentCategory === 'all' || currentCategory === 'complement');
+      if (showTable) totalItems += 1;
+
+      if (nextIndex >= 0 && nextIndex < totalItems) {
+        currentCardIndex = nextIndex;
+        renderQuiz();
+      }
+    }
+
+    // 回答の正規化関数 (入力表記の揺れを吸収する)
+    function normalizeAnswerString(str) {
+      if (!str) return "";
+      
+      // 全角英数字を半角に変換
+      let norm = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+      });
+      
+      // 全角カンマ・スペースの統一と除去
+      norm = norm.replace(/，/g, ",").replace(/\s+/g, "").toLowerCase();
+      
+      // 2進数・10進数・16進数の基数文字の除去
+      norm = norm.replace(/\((2|10|16|2進数|10進数|16進数|２|１０|１６)\)$/, "");
+      norm = norm.replace(/_(2|10|16)$/, "");
+      norm = norm.replace(/2進数$/, "").replace(/10進数$/, "").replace(/16進数$/, "");
+      
+      // 16進数のプレフィックス「0x」「h」などの除去
+      norm = norm.replace(/^0x/, "");
+      norm = norm.replace(/h$/, "");
+
+      return norm;
+    }
+
+    // 記述式部分一致・キーワードマッチ判定
+    function checkKeywordMatch(userAns, keywords) {
+      const normUser = userAns.toLowerCase();
+      return keywords.some(keyword => normUser.includes(keyword.toLowerCase()));
+    }
+
+    // クイズ表示レンダリング
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      // 対照表問題を補数カテゴリまたは全範囲の末尾に追加するフラグ
+      const showTable = (currentCategory === 'all' || currentCategory === 'complement');
+
+      if (viewMode === 'list') {
+        // リスト形式ですべて表示
+        filteredQuestions.forEach((q, idx) => {
+          container.appendChild(createQuizCardHTML(q, idx));
+        });
+        
+        if (showTable) {
+          container.appendChild(createTableCardHTML());
+        }
+      } else {
+        // カード形式で1問ずつ表示
+        let totalItems = filteredQuestions.length;
+        if (showTable) totalItems += 1;
+        
+        document.getElementById('cardPositionIndicator').textContent = `${currentCardIndex + 1} / ${totalItems}`;
+        
+        // 進捗バーの更新
+        const pct = (currentCardIndex / (totalItems - 1 || 1)) * 100;
+        document.getElementById('cardProgressBar').style.width = `${pct}%`;
+
+        if (currentCardIndex < filteredQuestions.length) {
+          const q = filteredQuestions[currentCardIndex];
+          container.appendChild(createQuizCardHTML(q, currentCardIndex));
+        } else if (showTable && currentCardIndex === filteredQuestions.length) {
+          container.appendChild(createTableCardHTML());
+        }
+
+        // ナビゲーションボタン状態制御
+        document.getElementById('prevCardBtn').disabled = currentCardIndex === 0;
+        document.getElementById('nextCardBtn').disabled = currentCardIndex === totalItems - 1;
+      }
+    }
+
+    // 問題カードHTML生成
+    function createQuizCardHTML(q, displayIdx) {
+      const card = document.createElement('div');
+      card.className = 'quiz-card';
+      card.id = `card-${q.id}`;
+      
+      const isCompleted = userProgress.completedAnswers[q.id];
+      if (isCompleted) {
+        card.classList.add('completed');
+      }
+
+      // カテゴリ名の日本語変換
+      let catName = "基礎知識";
+      if (q.category === "conversion") catName = "n進法変換";
+      if (q.category === "operation") catName = "2進数演算";
+      if (q.category === "complement") catName = "補数表記";
+
+      let optionsHTML = '';
+      if (q.type === 'choice') {
+        // 選択肢の生成
+        optionsHTML = `<div class="options-grid">`;
+        q.options.forEach((opt, oIdx) => {
+          const optId = `opt-${q.id}-${oIdx}`;
+          const checked = isCompleted && userProgress.completedAnswers[q.id].userAnswer === opt ? 'checked' : '';
+          const disabled = isCompleted ? 'disabled' : '';
+          optionsHTML += `
+            <label class="option-label" for="${optId}">
+              <input type="radio" name="name-${q.id}" id="${optId}" class="option-radio" value="${opt}" ${checked} ${disabled} onchange="selectOption('${q.id}', '${opt}')">
+              <span class="option-text">${opt}</span>
+            </label>
+          `;
+        });
+        optionsHTML += `</div>`;
+      } else {
+        // 記述解答入力欄の生成
+        const userVal = isCompleted ? userProgress.completedAnswers[q.id].userAnswer : '';
+        const disabled = isCompleted ? 'disabled' : '';
+        optionsHTML = `
+          <div class="input-container">
+            <input type="text" id="input-${q.id}" class="text-input" placeholder="解答を入力してください" value="${userVal}" ${disabled} onkeypress="handleInputEnter(event, '${q.id}')">
+          </div>
+        `;
+      }
+
+      // 送信・判定ボタンエリア
+      let actionHTML = '';
+      if (!isCompleted) {
+        actionHTML = `
+          <div class="action-row">
+            <button class="btn btn-primary" onclick="submitAnswer('${q.id}')">解答する</button>
+          </div>
+        `;
+      }
+
+      // フィードバック表示エリア
+      let feedbackHTML = '';
+      if (isCompleted) {
+        const isCorrect = userProgress.completedAnswers[q.id].isCorrect;
+        const statusClass = isCorrect ? 'correct' : 'incorrect';
+        const titleText = isCorrect ? '🎉 正解です！' : '❌ 不正解です';
+        feedbackHTML = `
+          <div class="feedback-message ${statusClass}">
+            <div class="feedback-title">${titleText}</div>
+            <div>あなたの解答: <b>${userProgress.completedAnswers[q.id].userAnswer}</b></div>
+            ${!isCorrect ? `<div>正しい解答: <b>${q.answer}</b></div>` : ''}
+            <div class="explanation-box">
+              <h4>💡 解説</h4>
+              <p>${q.explanation}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="quiz-header">
+          <span class="quiz-badge">${catName}</span>
+          <span class="quiz-number">問題 ${displayIdx + 1}</span>
+        </div>
+        <div class="quiz-question">${q.question}</div>
+        ${optionsHTML}
+        ${actionHTML}
+        ${feedbackHTML}
+      `;
+
+      return card;
+    }
+
+    // 対照表問題HTMLの生成
+    function createTableCardHTML() {
+      const card = document.createElement('div');
+      card.className = 'quiz-card';
+      card.id = 'card-table-exercise';
+
+      const tableKeys = Object.keys(tableAnswers);
+      const allDone = tableKeys.every(k => userProgress.tableAnswers[k] !== undefined);
+      if (allDone) {
+        card.classList.add('completed');
+      }
+
+      // 各セルの入力フィールドHTMLヘルパー
+      const getCellHTML = (id, label) => {
+        const userVal = userProgress.tableAnswers[id] || '';
+        const disabled = allDone ? 'disabled' : '';
+        const isCorrect = allDone && normalizeAnswerString(userVal) === normalizeAnswerString(tableAnswers[id]);
+        const style = allDone ? (isCorrect ? 'border-color: var(--color-success); color: var(--color-success);' : 'border-color: var(--color-error); color: var(--color-error);') : '';
+        return `<input type="text" id="tbl-${id}" class="table-input" style="${style}" value="${userVal}" placeholder="${label}" ${disabled}>`;
+      };
+
+      let actionHTML = '';
+      if (!allDone) {
+        actionHTML = `
+          <div class="action-row">
+            <button class="btn btn-primary" onclick="submitTableAnswers()">対照表を判定する</button>
+          </div>
+        `;
+      }
+
+      let feedbackHTML = '';
+      if (allDone) {
+        // 全体の成否判定
+        let correctCount = 0;
+        tableKeys.forEach(k => {
+          if (normalizeAnswerString(userProgress.tableAnswers[k]) === normalizeAnswerString(tableAnswers[k])) {
+            correctCount++;
+          }
+        });
+        const isPerfect = correctCount === tableKeys.length;
+        const statusClass = isPerfect ? 'correct' : 'incorrect';
+        const titleText = isPerfect ? '🎉 対照表 完全制覇！' : `⚠️ 判定結果 (${correctCount} / ${tableKeys.length} 正解)`;
+        
+        feedbackHTML = `
+          <div class="feedback-message ${statusClass}">
+            <div class="feedback-title">${titleText}</div>
+            <div class="explanation-box">
+              <h4>💡 対照表の解説</h4>
+              <p>8ビットの2の補数表現では、最上位ビット（左端）が「符号ビット」となります。0は正の数、1は負の数です。</p>
+              <ul>
+                <li><b>正の数（0以上）:</b> 00000000(0) から 01111111(127) まで、通常の2進数とまったく同じ表現になります。</li>
+                <li><b>負の数:</b> 正の値を全ビット反転し、1を加えることで作られます。例えば -1 は、1(00000001) を反転して 11111110、1を加えて <b>11111111</b> になります。</li>
+                <li><b>限界値:</b> 負の最小値は 10000000(2) = <b>-128</b> となり、これはビット反転＋1の手順では作れず、表の端に位置する限界の負数です。</li>
+              </ul>
+            </div>
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="quiz-header">
+          <span class="quiz-badge">補数表記</span>
+          <span class="quiz-number">特別演習</span>
+        </div>
+        <div class="quiz-question">
+          <b>10進数と 8ビット2進数（2の補数表記）の対照表を完成させなさい。</b>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">解説書p.28の表に基づき、空欄に8桁の2進数（半角）を入力してください。</p>
+        </div>
+        
+        <div class="table-container">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>10進数</th>
+                <th>2進数 (8ビット補数表記)</th>
+                <th style="border-left: 1px solid var(--card-border);">10進数</th>
+                <th>2進数 (8ビット補数表記)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>127</td>
+                <td>01111111</td>
+                <td style="border-left: 1px solid var(--card-border);">-1</td>
+                <td>${getCellHTML('tm1', '11111111')}</td>
+              </tr>
+              <tr>
+                <td>64</td>
+                <td>${getCellHTML('t64', '01000000')}</td>
+                <td style="border-left: 1px solid var(--card-border);">-2</td>
+                <td>${getCellHTML('tm2', '11111110')}</td>
+              </tr>
+              <tr>
+                <td>32</td>
+                <td>${getCellHTML('t32', '00100000')}</td>
+                <td style="border-left: 1px solid var(--card-border);">-4</td>
+                <td>${getCellHTML('tm4', '11111100')}</td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>${getCellHTML('t16', '00010000')}</td>
+                <td style="border-left: 1px solid var(--card-border);">-8</td>
+                <td>${getCellHTML('tm8', '11111000')}</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>${getCellHTML('t8', '00001000')}</td>
+                <td style="border-left: 1px solid var(--card-border);">-16</td>
+                <td>${getCellHTML('tm16', '11110000')}</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>${getCellHTML('t4', '00000100')}</td>
+                <td style="border-left: 1px solid var(--card-border);">-32</td>
+                <td>${getCellHTML('tm32', '11100000')}</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>${getCellHTML('t2', '00000010')}</td>
+                <td style="border-left: 1px solid var(--card-border);">-64</td>
+                <td>${getCellHTML('tm64', '11000000')}</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>${getCellHTML('t1', '00000001')}</td>
+                <td style="border-left: 1px solid var(--card-border);">-128</td>
+                <td>${getCellHTML('tm128', '10000000')}</td>
+              </tr>
+              <tr>
+                <td>0</td>
+                <td>00000000</td>
+                <td style="border-left: 1px solid var(--card-border);">-</td>
+                <td style="color: var(--text-muted); font-size: 0.8rem;">(全17マス)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        ${actionHTML}
+        ${feedbackHTML}
+      `;
+
+      return card;
+    }
+
+    // 記述式問題でEnterキーを押した時の処理
+    function handleInputEnter(event, qId) {
+      if (event.key === 'Enter') {
+        submitAnswer(qId);
+      }
+    }
+
+    // 選択肢変更時に一時保存
+    let tempSelectedOptions = {};
+    function selectOption(qId, val) {
+      tempSelectedOptions[qId] = val;
+    }
+
+    // 問題の解答を送信・判定
+    function submitAnswer(qId) {
+      const q = quizDatabase.find(item => item.id === qId);
+      if (!q) return;
+
+      let userAnswer = "";
+      if (q.type === 'choice') {
+        userAnswer = tempSelectedOptions[qId] || "";
+        if (!userAnswer) {
+          alert("選択肢を選んでください。");
+          return;
+        }
+      } else {
+        const input = document.getElementById(`input-${q.id}`);
+        userAnswer = input.value.trim();
+        if (!userAnswer) {
+          alert("解答を入力してください。");
+          return;
+        }
+      }
+
+      // 正誤判定ロジック
+      let isCorrect = false;
+      const normalizedUser = normalizeAnswerString(userAnswer);
+      const normalizedSystem = normalizeAnswerString(q.answer);
+
+      if (q.type === 'choice') {
+        isCorrect = normalizedUser === normalizedSystem;
+      } else {
+        // テキスト入力の判定
+        if (q.keywords) {
+          isCorrect = checkKeywordMatch(normalizedUser, q.keywords) || normalizedUser === normalizedSystem;
+        } else {
+          isCorrect = normalizedUser === normalizedSystem;
+        }
+      }
+
+      // 進捗データの更新
+      userProgress.completedAnswers[q.id] = {
+        isCorrect: isCorrect,
+        userAnswer: userAnswer
+      };
+
+      if (isCorrect) {
+        userProgress.score += 10;
+      }
+
+      saveProgress();
+      renderQuiz();
+      updateDashboard();
+    }
+
+    // 対照表問題の送信・判定
+    function submitTableAnswers() {
+      const tableKeys = Object.keys(tableAnswers);
+      let answersToSave = {};
+      let allFilled = true;
+
+      // 値の読み出し
+      tableKeys.forEach(k => {
+        const input = document.getElementById(`tbl-${k}`);
+        if (input) {
+          const val = input.value.trim();
+          if (!val) allFilled = false;
+          answersToSave[k] = val;
+        }
+      });
+
+      if (!allFilled) {
+        alert("対照表のすべての空欄を埋めてください。");
+        return;
+      }
+
+      // セーブ
+      userProgress.tableAnswers = answersToSave;
+      
+      // スコア計算 (1マス2点)
+      let correctCount = 0;
+      tableKeys.forEach(k => {
+        if (normalizeAnswerString(answersToSave[k]) === normalizeAnswerString(tableAnswers[k])) {
+          correctCount++;
+        }
+      });
+
+      userProgress.score += correctCount * 2;
+
+      saveProgress();
+      renderQuiz();
+      updateDashboard();
+    }
+
+    // ダッシュボード更新
+    function updateDashboard() {
+      const totalQuestions = quizDatabase.length;
+      const completedList = Object.keys(userProgress.completedAnswers);
+      const completedCount = completedList.length;
+
+      document.getElementById('dashTotalCount').textContent = `${completedCount} / ${totalQuestions}`;
+
+      // 正答率の計算
+      let accuracy = 0;
+      if (completedCount > 0) {
+        const correctCount = completedList.filter(id => userProgress.completedAnswers[id].isCorrect).length;
+        accuracy = Math.round((correctCount / completedCount) * 100);
+      }
+      document.getElementById('dashAccuracy').textContent = `${accuracy}%`;
+      document.getElementById('dashTotalScore').textContent = userProgress.score;
+    }
+
+    // ローカルストレージへのセーブ/ロード
+    function saveProgress() {
+      localStorage.setItem('cs_binary_progress', JSON.stringify(userProgress));
+    }
+
+    function loadProgress() {
+      const saved = localStorage.getItem('cs_binary_progress');
+      if (saved) {
+        try {
+          userProgress = JSON.parse(saved);
+          if (!userProgress.completedAnswers) userProgress.completedAnswers = {};
+          if (!userProgress.tableAnswers) userProgress.tableAnswers = {};
+          if (userProgress.score === undefined) userProgress.score = 0;
+        } catch (e) {
+          console.error("進捗データの読み込みエラー", e);
+        }
+      }
+    }
+
+    // 進捗リセット
+    function resetProgress() {
+      if (confirm("これまでの解答進捗とスコアをリセットしますか？")) {
+        userProgress = {
+          completedAnswers: {},
+          tableAnswers: {},
+          score: 0
+        };
+        tempSelectedOptions = {};
+        saveProgress();
+        renderQuiz();
+        updateDashboard();
+      }
+    }
+  </script>
+</body>
+</html>
