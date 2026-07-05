@@ -19,6 +19,8 @@
       
       --color-blue: #38bdf8;
       --color-green: #4ade80;
+      --color-purple: #c084fc;
+      --color-cyan: #22d3ee;
       
       --font-outfit: 'Outfit', 'Noto Sans JP', sans-serif;
       --font-inter: 'Inter', 'Noto Sans JP', sans-serif;
@@ -149,6 +151,14 @@
       background: var(--color-green);
     }
 
+    .portal-card.set-3::before {
+      background: var(--color-purple);
+    }
+
+    .portal-card.set-4::before {
+      background: var(--color-cyan);
+    }
+
     .portal-card:hover {
       transform: translateY(-8px);
       border-color: rgba(255, 255, 255, 0.2);
@@ -160,6 +170,14 @@
 
     .portal-card.set-2:hover {
       box-shadow: 0 12px 30px rgba(74, 222, 128, 0.15);
+    }
+
+    .portal-card.set-3:hover {
+      box-shadow: 0 12px 30px rgba(192, 132, 252, 0.15);
+    }
+
+    .portal-card.set-4:hover {
+      box-shadow: 0 12px 30px rgba(34, 211, 238, 0.15);
     }
 
     .card-icon {
@@ -182,6 +200,14 @@
 
     .portal-card.set-2 .card-icon {
       color: var(--color-green);
+    }
+
+    .portal-card.set-3 .card-icon {
+      color: var(--color-purple);
+    }
+
+    .portal-card.set-4 .card-icon {
+      color: var(--color-cyan);
     }
 
     .portal-card:hover .card-icon {
@@ -222,6 +248,14 @@
       background: var(--color-green);
     }
 
+    .portal-card.set-3 .card-btn {
+      background: var(--color-purple);
+    }
+
+    .portal-card.set-4 .card-btn {
+      background: var(--color-cyan);
+    }
+
     .portal-card.set-1:hover .card-btn {
       background: #7dd3fc;
       box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
@@ -230,6 +264,16 @@
     .portal-card.set-2:hover .card-btn {
       background: #86efac;
       box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
+    }
+
+    .portal-card.set-3:hover .card-btn {
+      background: #d8b4fe;
+      box-shadow: 0 4px 15px rgba(192, 132, 252, 0.4);
+    }
+
+    .portal-card.set-4:hover .card-btn {
+      background: #67e8f9;
+      box-shadow: 0 4px 15px rgba(34, 211, 238, 0.4);
     }
 
     footer {
@@ -265,28 +309,48 @@
 
     <div class="cards-grid">
       <!-- Set 1 Card -->
-      <a href="computer_exercises.html" class="portal-card set-1">
+      <a href="computer_exercises.html?v=41" class="portal-card set-1">
         <div class="card-icon">🔵</div>
         <div class="card-title">演習問題 Set 1</div>
         <div class="card-desc">
-          コンピュータ解説書(p.1-p.33)および演習問題1の全範囲を網羅した基本問題セットです。（全38問）
+          コンピュータ解説書(p.1-p.33)および演習問題1の全範囲、Excel解説書を網羅した基本問題セットです。（全41問）
         </div>
         <div class="card-btn">開始する</div>
       </a>
 
       <!-- Set 2 Card -->
-      <a href="computer_exercises_set2.html" class="portal-card set-2">
+      <a href="computer_exercises_set2.html?v=41" class="portal-card set-2">
         <div class="card-icon">🟢</div>
         <div class="card-title">演習問題 Set 2</div>
         <div class="card-desc">
-          Set 1と同等の出題範囲で、数値や問いかけのバリエーションを変えた模擬試験用問題セットです。（全38問）
+          Set 1と同等の出題範囲で、数値や問いかけのバリエーションを変えた模擬試験用問題セットです。（全41問）
         </div>
         <div class="card-btn">開始する</div>
+      </a>
+
+      <!-- Polynomial Card -->
+      <a href="polynomial_exercise.html" class="portal-card set-3">
+        <div class="card-icon">🟣</div>
+        <div class="card-title">多項式と剰余定理</div>
+        <div class="card-desc">
+          3次多項式の根 $k$ や割る値 $d$ をスライダーで動かし、グラフと余りの変化（剰余定理）を視覚的に学べるシミュレーターです。
+        </div>
+        <div class="card-btn">シミュレーターを開く</div>
+      </a>
+
+      <!-- Trig Card -->
+      <a href="trigonometric_exercise.html" class="portal-card set-4">
+        <div class="card-icon">🔵</div>
+        <div class="card-title">三角関数方程式</div>
+        <div class="card-desc">
+          逆数三角関数 ($\csc, \sec, \cot$) を含む方程式をグラフと単位円の連動により視覚的に解き明かすシミュレーターです。
+        </div>
+        <div class="card-btn">シミュレーターを開く</div>
       </a>
     </div>
 
     <footer>
-      <p>© 2026 情報Ⅰ 学習サポートシステム | 範囲: コンピュータ解説書(p.1-p.33) & 2進法演習問題1</p>
+      <p>© 2026 情報Ⅰ 学習サポートシステム | 範囲: コンピュータ解説書(p.1-p.33) & 2進法演習問題1 & Excel解説書</p>
     </footer>
   </div>
 
