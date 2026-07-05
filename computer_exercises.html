@@ -157,8 +157,9 @@
     /* コントロールボタン群 */
     .controls {
       display: flex;
-      gap: 1rem;
+      gap: 0.75rem;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -196,6 +197,11 @@
       background: #7dd3fc;
       color: #0f172a;
       box-shadow: 0 4px 15px var(--color-primary-glow);
+    }
+
+    /* 特殊なアクティブ状態用のボタンスタイル */
+    .mode-switch-active {
+      font-weight: 600;
     }
 
     /* ダッシュボード (進捗状況) */
@@ -576,25 +582,6 @@
       background: rgba(15, 23, 42, 0.8);
     }
 
-    /* ビジュアル木構造 (2進変換の割り算プロセス用) */
-    .tree-step {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.25rem;
-      font-family: monospace;
-    }
-
-    .tree-divide {
-      color: var(--color-primary);
-      margin-right: 0.5rem;
-    }
-
-    .tree-rem {
-      color: var(--color-secondary);
-      margin-left: 1.5rem;
-      font-weight: bold;
-    }
-
     /* アニメーション */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -611,13 +598,6 @@
       font-size: 0.85rem;
     }
 
-    /* 復習モードトグル用 */
-    .mode-switch-active {
-      border-color: var(--color-secondary) !important;
-      box-shadow: 0 0 15px var(--color-secondary-glow);
-    }
-
-    /* 画面切り替え時のスムーズ表示 */
     .hidden {
       display: none !important;
     }
@@ -682,6 +662,9 @@
       <div class="controls">
         <button class="btn" id="themeToggleBtn" onclick="toggleTheme()">
           ☀️ Mode
+        </button>
+        <button class="btn" id="toggleReviewBtn" onclick="toggleReviewMode()">
+          ⚠️ 間違えた問題
         </button>
         <button class="btn" id="resetProgressBtn" onclick="resetProgress()">
           🔄 進捗リセット
@@ -775,7 +758,7 @@
         id: "q3",
         category: "basic",
         type: "text",
-        question: "コンピュータが物理的に信号を処理するとき、10段階の細かな電圧（10進数）ではなく、オンとオフ（2進数）の2状態だけでデータを表現する最も大きな技術的理由は何ですか？（簡潔に答えなさい）",
+        question: "コンピュータが物理的に信号を処理するとき、10段階 of 細かな電圧（10進数）ではなく、オンとオフ（2進数）の2状態だけでデータを表現する最も大きな技術的理由は何ですか？（簡潔に答えなさい）",
         answer: "ノイズに強く誤りが生じにくいため",
         keywords: ["ノイズ", "電圧", "変動", "安定", "区別", "誤り", "間違い", "確実"],
         explanation: "電圧の細かな変化はノイズ（電圧のふらつき）の影響を受けやすく、データに誤りが生じやすくなります。オンとオフの2つであれば電圧が多少ふらついても容易に区別できるため、ノイズに強く非常に安定して動作させることができます。"
@@ -944,7 +927,7 @@
         type: "text",
         question: "16進数の「100」より「2」小さい値は16進数で何ですか？",
         answer: "FE",
-        explanation: "16進数で桁下がりを考えします：<br>100(16) - 1(10) = FF(16)<br>FF(16) - 1(10) = <b>FE</b>(16)<br>10進数で考えると 256 - 2 = 254 です。254を16進数に変換すると 254 = 15×16 + 14 = F E(16) と一致します。"
+        explanation: "16進数で桁下がりを考えます：<br>100(16) - 1(10) = FF(16)<br>FF(16) - 1(10) = <b>FE</b>(16)<br>10進数で考えると 256 - 2 = 254 です。254を16進数に変換すると 254 = 15×16 + 14 = F E(16) と一致します。"
       },
       {
         id: "q23",
@@ -1092,7 +1075,7 @@
         type: "text",
         question: "8ビットの2の補数表現を用いて、10進数の減算「<b>80 - 20</b>」を加算に直して計算します。<br>この時、引く数「20」を2の補数表現（8ビット）に直した値を答えなさい。",
         answer: "11101100",
-        explanation: "20 の8ビット2進数表現は 00010100(2) です。<br>1. ビットを反転：11101011<br>2. 1を加算：<b>11101100</b><br>これが「-20」を表す2の補数です。コンピュータはこの補数を80(01010000)に足すことで減算を実現します。"
+        explanation: "20 の8ビット2進数表現 is 00010100(2) です。<br>1. ビットを反転：11101011<br>2. 1を加算：<b>11101100</b><br>これが「-20」を表す2の補数です。コンピュータはこの補数を80(01010000)に足すことで減算を実現します。"
       },
       {
         id: "q38",
@@ -1100,11 +1083,11 @@
         type: "text",
         question: "8ビットの2の補数表現において、<b>20(10) - 80(10)</b> を加算形式「20(10) + (-80(10))」で計算します。<br>結果となる8ビットの2進数（2の補数表現）を答えなさい。",
         answer: "11000100",
-        explanation: "手順は以下の通りです：<br>1. 20(10) を2進数にする → <b>00010100</b><br>2. -80(10) の2の補数を求める。<br>   +80(10) = 01010000 → 反転：10101111 → +1：<b>10110000</b><br>3. 2つを加算する：<br>   00010100 + 10110000 = <b>11000100</b><br>(※10進数で検算すると 20 - 80 = -60。11000100 を負の数としてデコードすると、反転して+1して 00111100(2) = 60となり、確かに -60 を表していることが分かります。)"
+        explanation: "手順は以下の通りです：<br>1. 20(10) を2進数にする → <b>00010100</b><br>2. -80(10) の2の補数を求める。<br>   +80(10) = 01010000 → 反転：10101111 → +1：<b>10110000</b><br>3. 2つを加算する：<br>   00010100 + 10110000 = <b>11000100</b>"
       }
     ];
 
-    // 対照表問題の正しい対応関係 (q_table 用)
+    // 対照表問題の正しい対応関係
     const tableAnswers = {
       t127: "01111111",
       t64: "01000000",
@@ -1130,8 +1113,9 @@
     let viewMode = 'list'; // 'list' または 'card'
     let currentCardIndex = 0;
     let filteredQuestions = [...quizDatabase];
+    let reviewModeActive = false; // 復習モードの状態
     
-    // 進捗データ (localStorage用)
+    // 進捗データ
     let userProgress = {
       completedAnswers: {}, // { questionId: { isCorrect: boolean, userAnswer: string } }
       tableAnswers: {},      // { cellId: userAnswer }
@@ -1146,7 +1130,6 @@
       updateDashboard();
     });
 
-    // テーマ切り替え
     function initTheme() {
       const savedTheme = localStorage.getItem('theme') || 'dark';
       document.documentElement.setAttribute('data-theme', savedTheme);
@@ -1161,6 +1144,26 @@
       document.getElementById('themeToggleBtn').innerHTML = next === 'dark' ? '☀️ Light' : '🌙 Dark';
     }
 
+    // 復習モード切り替え
+    function toggleReviewMode() {
+      reviewModeActive = !reviewModeActive;
+      const btn = document.getElementById('toggleReviewBtn');
+      if (reviewModeActive) {
+        btn.classList.add('mode-switch-active');
+        btn.innerHTML = '📝 すべての問題';
+        btn.style.borderColor = 'var(--color-error)';
+        btn.style.boxShadow = '0 0 10px var(--color-error-glow)';
+      } else {
+        btn.classList.remove('mode-switch-active');
+        btn.innerHTML = '⚠️ 間違えた問題';
+        btn.style.borderColor = '';
+        btn.style.boxShadow = '';
+      }
+      
+      currentCardIndex = 0;
+      renderQuiz();
+    }
+
     // ビューモード切り替え (一覧 / 1問ずつ)
     function toggleViewMode() {
       viewMode = viewMode === 'list' ? 'card' : 'list';
@@ -1173,7 +1176,7 @@
       if (viewMode === 'card') {
         progressBar.classList.remove('hidden');
         navRow.classList.remove('hidden');
-        selector.classList.add('hidden'); // 1問ずつモードの時はカテゴリフィルターを非表示か、固定
+        selector.classList.add('hidden');
         currentCardIndex = 0;
       } else {
         progressBar.classList.add('hidden');
@@ -1183,13 +1186,31 @@
       renderQuiz();
     }
 
+    // フィルタリング処理
+    function updateFilter() {
+      // カテゴリでフィルター
+      let list = [...quizDatabase];
+      if (currentCategory !== 'all') {
+        list = quizDatabase.filter(q => q.category === currentCategory);
+      }
+      
+      // 復習モードがオンの場合、回答済みでかつ不正解（isCorrect === false）のものだけを残す
+      if (reviewModeActive) {
+        list = list.filter(q => {
+          const ans = userProgress.completedAnswers[q.id];
+          return ans && ans.isCorrect === false;
+        });
+      }
+      
+      filteredQuestions = list;
+    }
+
     // カテゴリフィルター切り替え
     function switchCategory(cat) {
       currentCategory = cat;
       const tabs = document.querySelectorAll('.selector-tab');
       tabs.forEach(tab => tab.classList.remove('active'));
       
-      // ボタンのアクティブ化
       const activeTab = Array.from(tabs).find(tab => {
         if (cat === 'all') return tab.textContent.includes('全範囲');
         if (cat === 'basic') return tab.textContent.includes('1.');
@@ -1199,22 +1220,14 @@
       });
       if (activeTab) activeTab.classList.add('active');
 
-      if (cat === 'all') {
-        filteredQuestions = [...quizDatabase];
-      } else {
-        filteredQuestions = quizDatabase.filter(q => q.category === cat);
-      }
-      
       currentCardIndex = 0;
       renderQuiz();
     }
 
-    // 1問ずつモード用のカードナビゲーション
     function navigateCard(direction) {
       const nextIndex = currentCardIndex + direction;
-      // 対照表問題も含めるため、filteredQuestions.length + 1が上限（補数カテゴリにいる場合のみ対照表を末尾に追加）
       let totalItems = filteredQuestions.length;
-      const showTable = (currentCategory === 'all' || currentCategory === 'complement');
+      const showTable = (currentCategory === 'all' || currentCategory === 'complement') && !reviewModeActive;
       if (showTable) totalItems += 1;
 
       if (nextIndex >= 0 && nextIndex < totalItems) {
@@ -1223,31 +1236,20 @@
       }
     }
 
-    // 回答の正規化関数 (入力表記の揺れを吸収する)
     function normalizeAnswerString(str) {
       if (!str) return "";
-      
-      // 全角英数字を半角に変換
       let norm = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
         return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
       });
-      
-      // 全角カンマ・スペースの統一と除去
       norm = norm.replace(/，/g, ",").replace(/\s+/g, "").toLowerCase();
-      
-      // 2進数・10進数・16進数の基数文字の除去
       norm = norm.replace(/\((2|10|16|2進数|10進数|16進数|２|１０|１６)\)$/, "");
       norm = norm.replace(/_(2|10|16)$/, "");
       norm = norm.replace(/2進数$/, "").replace(/10進数$/, "").replace(/16進数$/, "");
-      
-      // 16進数のプレフィックス「0x」「h」などの除去
       norm = norm.replace(/^0x/, "");
       norm = norm.replace(/h$/, "");
-
       return norm;
     }
 
-    // 記述式部分一致・キーワードマッチ判定
     function checkKeywordMatch(userAns, keywords) {
       const normUser = userAns.toLowerCase();
       return keywords.some(keyword => normUser.includes(keyword.toLowerCase()));
@@ -1258,26 +1260,47 @@
       const container = document.getElementById('quizContainer');
       container.innerHTML = '';
 
-      // 対照表問題を補数カテゴリまたは全範囲の末尾に追加するフラグ
-      const showTable = (currentCategory === 'all' || currentCategory === 'complement');
+      updateFilter();
+
+      const showTable = (currentCategory === 'all' || currentCategory === 'complement') && !reviewModeActive;
+
+      // 復習対象問題がない場合の画面
+      if (reviewModeActive && filteredQuestions.length === 0) {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        card.style.textAlign = 'center';
+        card.innerHTML = `
+          <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">🎉</div>
+          <div class="quiz-question" style="margin-bottom: 1rem; font-weight: 700; text-align: center;">復習が必要な間違えた問題はありません！</div>
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem;">現在、すべての解答済み問題において正解しています。素晴らしい進捗です！</p>
+          <div class="action-row" style="justify-content: center;">
+            <button class="btn btn-primary" onclick="toggleReviewMode()">すべての問題に戻る</button>
+          </div>
+        `;
+        container.appendChild(card);
+        
+        if (viewMode === 'card') {
+          document.getElementById('cardPositionIndicator').textContent = `0 / 0`;
+          document.getElementById('cardProgressBar').style.width = `0%`;
+          document.getElementById('prevCardBtn').disabled = true;
+          document.getElementById('nextCardBtn').disabled = true;
+        }
+        return;
+      }
 
       if (viewMode === 'list') {
-        // リスト形式ですべて表示
         filteredQuestions.forEach((q, idx) => {
           container.appendChild(createQuizCardHTML(q, idx));
         });
-        
         if (showTable) {
           container.appendChild(createTableCardHTML());
         }
       } else {
-        // カード形式で1問ずつ表示
         let totalItems = filteredQuestions.length;
         if (showTable) totalItems += 1;
         
         document.getElementById('cardPositionIndicator').textContent = `${currentCardIndex + 1} / ${totalItems}`;
         
-        // 進捗バーの更新
         const pct = (currentCardIndex / (totalItems - 1 || 1)) * 100;
         document.getElementById('cardProgressBar').style.width = `${pct}%`;
 
@@ -1288,24 +1311,21 @@
           container.appendChild(createTableCardHTML());
         }
 
-        // ナビゲーションボタン状態制御
         document.getElementById('prevCardBtn').disabled = currentCardIndex === 0;
         document.getElementById('nextCardBtn').disabled = currentCardIndex === totalItems - 1;
       }
     }
 
-    // 問題カードHTML生成
     function createQuizCardHTML(q, displayIdx) {
       const card = document.createElement('div');
       card.className = 'quiz-card';
       card.id = `card-${q.id}`;
       
       const isCompleted = userProgress.completedAnswers[q.id];
-      if (isCompleted) {
+      if (isCompleted && isCompleted.isCorrect) {
         card.classList.add('completed');
       }
 
-      // カテゴリ名の日本語変換
       let catName = "基礎知識";
       if (q.category === "conversion") catName = "n進法変換";
       if (q.category === "operation") catName = "2進数演算";
@@ -1313,12 +1333,12 @@
 
       let optionsHTML = '';
       if (q.type === 'choice') {
-        // 選択肢の生成
         optionsHTML = `<div class="options-grid">`;
         q.options.forEach((opt, oIdx) => {
           const optId = `opt-${q.id}-${oIdx}`;
-          const checked = isCompleted && userProgress.completedAnswers[q.id].userAnswer === opt ? 'checked' : '';
-          const disabled = isCompleted ? 'disabled' : '';
+          // 復習モードで解き直すために、不正解の状態なら入力を解放する
+          const checked = isCompleted && isCompleted.userAnswer === opt ? 'checked' : '';
+          const disabled = isCompleted && isCompleted.isCorrect ? 'disabled' : '';
           optionsHTML += `
             <label class="option-label" for="${optId}">
               <input type="radio" name="name-${q.id}" id="${optId}" class="option-radio" value="${opt}" ${checked} ${disabled} onchange="selectOption('${q.id}', '${opt}')">
@@ -1328,9 +1348,8 @@
         });
         optionsHTML += `</div>`;
       } else {
-        // 記述解答入力欄の生成
-        const userVal = isCompleted ? userProgress.completedAnswers[q.id].userAnswer : '';
-        const disabled = isCompleted ? 'disabled' : '';
+        const userVal = isCompleted ? isCompleted.userAnswer : '';
+        const disabled = isCompleted && isCompleted.isCorrect ? 'disabled' : '';
         optionsHTML = `
           <div class="input-container">
             <input type="text" id="input-${q.id}" class="text-input" placeholder="解答を入力してください" value="${userVal}" ${disabled} onkeypress="handleInputEnter(event, '${q.id}')">
@@ -1338,9 +1357,9 @@
         `;
       }
 
-      // 送信・判定ボタンエリア
+      // 未解答、または不正解の状態で解き直す場合にボタンを表示する
       let actionHTML = '';
-      if (!isCompleted) {
+      if (!isCompleted || !isCompleted.isCorrect) {
         actionHTML = `
           <div class="action-row">
             <button class="btn btn-primary" onclick="submitAnswer('${q.id}')">解答する</button>
@@ -1348,16 +1367,15 @@
         `;
       }
 
-      // フィードバック表示エリア
       let feedbackHTML = '';
       if (isCompleted) {
-        const isCorrect = userProgress.completedAnswers[q.id].isCorrect;
+        const isCorrect = isCompleted.isCorrect;
         const statusClass = isCorrect ? 'correct' : 'incorrect';
         const titleText = isCorrect ? '🎉 正解です！' : '❌ 不正解です';
         feedbackHTML = `
           <div class="feedback-message ${statusClass}">
             <div class="feedback-title">${titleText}</div>
-            <div>あなたの解答: <b>${userProgress.completedAnswers[q.id].userAnswer}</b></div>
+            <div>あなたの解答: <b>${isCompleted.userAnswer}</b></div>
             ${!isCorrect ? `<div>正しい解答: <b>${q.answer}</b></div>` : ''}
             <div class="explanation-box">
               <h4>💡 解説</h4>
@@ -1381,7 +1399,6 @@
       return card;
     }
 
-    // 対照表問題HTMLの生成
     function createTableCardHTML() {
       const card = document.createElement('div');
       card.className = 'quiz-card';
@@ -1393,7 +1410,6 @@
         card.classList.add('completed');
       }
 
-      // 各セルの入力フィールドHTMLヘルパー
       const getCellHTML = (id, label) => {
         const userVal = userProgress.tableAnswers[id] || '';
         const disabled = allDone ? 'disabled' : '';
@@ -1413,7 +1429,6 @@
 
       let feedbackHTML = '';
       if (allDone) {
-        // 全体の成否判定
         let correctCount = 0;
         tableKeys.forEach(k => {
           if (normalizeAnswerString(userProgress.tableAnswers[k]) === normalizeAnswerString(tableAnswers[k])) {
@@ -1525,20 +1540,17 @@
       return card;
     }
 
-    // 記述式問題でEnterキーを押した時の処理
     function handleInputEnter(event, qId) {
       if (event.key === 'Enter') {
         submitAnswer(qId);
       }
     }
 
-    // 選択肢変更時に一時保存
     let tempSelectedOptions = {};
     function selectOption(qId, val) {
       tempSelectedOptions[qId] = val;
     }
 
-    // 問題の解答を送信・判定
     function submitAnswer(qId) {
       const q = quizDatabase.find(item => item.id === qId);
       if (!q) return;
@@ -1567,7 +1579,6 @@
       if (q.type === 'choice') {
         isCorrect = normalizedUser === normalizedSystem;
       } else {
-        // テキスト入力の判定
         if (q.keywords) {
           isCorrect = checkKeywordMatch(normalizedUser, q.keywords) || normalizedUser === normalizedSystem;
         } else {
@@ -1575,14 +1586,21 @@
         }
       }
 
+      // スコア計算 (正答状況の新規判定)
+      const prevAns = userProgress.completedAnswers[q.id];
+      const previouslyCorrect = prevAns && prevAns.isCorrect;
+      
       // 進捗データの更新
       userProgress.completedAnswers[q.id] = {
         isCorrect: isCorrect,
         userAnswer: userAnswer
       };
 
-      if (isCorrect) {
+      // スコアの更新 (これまで未正解だったものを正解した場合のみ加算)
+      if (isCorrect && !previouslyCorrect) {
         userProgress.score += 10;
+      } else if (!isCorrect && previouslyCorrect) {
+        userProgress.score = Math.max(0, userProgress.score - 10);
       }
 
       saveProgress();
@@ -1590,13 +1608,11 @@
       updateDashboard();
     }
 
-    // 対照表問題の送信・判定
     function submitTableAnswers() {
       const tableKeys = Object.keys(tableAnswers);
       let answersToSave = {};
       let allFilled = true;
 
-      // 値の読み出し
       tableKeys.forEach(k => {
         const input = document.getElementById(`tbl-${k}`);
         if (input) {
@@ -1611,10 +1627,8 @@
         return;
       }
 
-      // セーブ
       userProgress.tableAnswers = answersToSave;
       
-      // スコア計算 (1マス2点)
       let correctCount = 0;
       tableKeys.forEach(k => {
         if (normalizeAnswerString(answersToSave[k]) === normalizeAnswerString(tableAnswers[k])) {
@@ -1629,7 +1643,6 @@
       updateDashboard();
     }
 
-    // ダッシュボード更新
     function updateDashboard() {
       const totalQuestions = quizDatabase.length;
       const completedList = Object.keys(userProgress.completedAnswers);
@@ -1637,7 +1650,6 @@
 
       document.getElementById('dashTotalCount').textContent = `${completedCount} / ${totalQuestions}`;
 
-      // 正答率の計算
       let accuracy = 0;
       if (completedCount > 0) {
         const correctCount = completedList.filter(id => userProgress.completedAnswers[id].isCorrect).length;
@@ -1647,7 +1659,6 @@
       document.getElementById('dashTotalScore').textContent = userProgress.score;
     }
 
-    // ローカルストレージへのセーブ/ロード
     function saveProgress() {
       localStorage.setItem('cs_binary_progress', JSON.stringify(userProgress));
     }
@@ -1666,7 +1677,6 @@
       }
     }
 
-    // 進捗リセット
     function resetProgress() {
       if (confirm("これまでの解答進捗とスコアをリセットしますか？")) {
         userProgress = {
@@ -1676,6 +1686,15 @@
         };
         tempSelectedOptions = {};
         saveProgress();
+        
+        // 復習モードを無効化
+        reviewModeActive = false;
+        const btn = document.getElementById('toggleReviewBtn');
+        btn.classList.remove('mode-switch-active');
+        btn.innerHTML = '⚠️ 間違えた問題';
+        btn.style.borderColor = '';
+        btn.style.boxShadow = '';
+
         renderQuiz();
         updateDashboard();
       }
