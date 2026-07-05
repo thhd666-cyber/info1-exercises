@@ -199,7 +199,6 @@
       box-shadow: 0 4px 15px var(--color-primary-glow);
     }
 
-    /* 特殊なアクティブ状態用のボタンスタイル */
     .mode-switch-active {
       font-weight: 600;
     }
@@ -281,15 +280,15 @@
 
     .selector-tab {
       flex: 1;
-      min-width: 160px;
+      min-width: 150px;
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 0.8rem 1rem;
+      padding: 0.8rem 0.8rem;
       border-radius: 12px;
       cursor: pointer;
       font-weight: 500;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: var(--transition-smooth);
       text-align: center;
     }
@@ -712,6 +711,7 @@
       <button class="selector-tab" onclick="switchCategory('conversion')">2. n進法の基礎・変換</button>
       <button class="selector-tab" onclick="switchCategory('operation')">3. 2進数の加減乗除</button>
       <button class="selector-tab" onclick="switchCategory('complement')">4. 補数表記と整数</button>
+      <button class="selector-tab" onclick="switchCategory('excel')">5. Excel数式・関数</button>
     </div>
 
     <!-- 問題リストエリア -->
@@ -728,12 +728,12 @@
 
     <!-- フッター -->
     <footer>
-      <p>© 2026 情報Ⅰ 学習サポートシステム | 範囲: コンピュータ解説書(p.1-p.33) & 2進法演習問題1</p>
+      <p>© 2026 情報Ⅰ 学習サポートシステム | 範囲: コンピュータ解説書(p.1-p.33) & 2進法演習問題1 & Excel解説書</p>
     </footer>
   </div>
 
   <script>
-    // 演習問題データベース (全38問)
+    // 演習問題データベース (全41問)
     const quizDatabase = [
       // === カテゴリ1: コンピュータの構成要素と装置 ===
       {
@@ -758,7 +758,7 @@
         id: "q3",
         category: "basic",
         type: "text",
-        question: "コンピュータが物理的に信号を処理するとき、10段階 of 細かな電圧（10進数）ではなく、オンとオフ（2進数）の2状態だけでデータを表現する最も大きな技術的理由は何ですか？（簡潔に答えなさい）",
+        question: "コンピュータが物理的に信号を処理するとき、10段階の細かな電圧（10進数）ではなく、オンとオフ（2進数）の2状態だけでデータを表現する最も大きな技術的理由は何ですか？（簡潔に答えなさい）",
         answer: "ノイズに強く誤りが生じにくいため",
         keywords: ["ノイズ", "電圧", "変動", "安定", "区別", "誤り", "間違い", "確実"],
         explanation: "電圧の細かな変化はノイズ（電圧のふらつき）の影響を受けやすく、データに誤りが生じやすくなります。オンとオフの2つであれば電圧が多少ふらついても容易に区別できるため、ノイズに強く非常に安定して動作させることができます。"
@@ -768,7 +768,7 @@
         category: "basic",
         type: "choice",
         question: "2進数の「0」と「1」の電気的状態は、コンピュータ内部の電子回路におけるどのような物理的状態に対応していますか？",
-        options: ["電気抵抗 of 大小", "スイッチの「オフ」と「オン」の状態", "電磁波の周波数の高低", "電気の流れる向き"],
+        options: ["電気抵抗の大小", "スイッチの「オフ」と「オン」の状態", "電磁波の周波数の高低", "電気の流れる向き"],
         answer: "スイッチの「オフ」と「オン」の状態",
         explanation: "2進数は電子回路におけるスイッチのON/OFF（電流が流れているか流れていないか）を直接「1」と「0」に割り当てて表現しています。これにより電子回路がそのまま論理演算を行えます。"
       },
@@ -803,7 +803,7 @@
         id: "q8",
         category: "basic",
         type: "text",
-        question: "2進数の最小のデータ単位を「ビット (bit)」と呼びますが、このビットを8個集めた（8ビット）データ量の基本単位の名前を答えなさい。",
+        question: "2進数の最小 of データ単位を「ビット (bit)」と呼びますが、このビットを8個集めた（8ビット）データ量の基本単位の名前を答えなさい。",
         answer: "バイト",
         keywords: ["バイト", "byte"],
         explanation: "1ビット(bit)は0か1の2つの状態を表します。これが8個集まった「1バイト(byte = 8ビット)」は、2の8乗である256通りの情報を表すことができます。"
@@ -1075,7 +1075,7 @@
         type: "text",
         question: "8ビットの2の補数表現を用いて、10進数の減算「<b>80 - 20</b>」を加算に直して計算します。<br>この時、引く数「20」を2の補数表現（8ビット）に直した値を答えなさい。",
         answer: "11101100",
-        explanation: "20 の8ビット2進数表現 is 00010100(2) です。<br>1. ビットを反転：11101011<br>2. 1を加算：<b>11101100</b><br>これが「-20」を表す2の補数です。コンピュータはこの補数を80(01010000)に足すことで減算を実現します。"
+        explanation: "20 の8ビット2進数表現は 00010100(2) です。<br>1. ビットを反転：11101011<br>2. 1を加算：<b>11101100</b><br>これが「-20」を表す2の補数です。コンピュータはこの補数を80(01010000)に足すことで減算を実現します。"
       },
       {
         id: "q38",
@@ -1084,6 +1084,33 @@
         question: "8ビットの2の補数表現において、<b>20(10) - 80(10)</b> を加算形式「20(10) + (-80(10))」で計算します。<br>結果となる8ビットの2進数（2の補数表現）を答えなさい。",
         answer: "11000100",
         explanation: "手順は以下の通りです：<br>1. 20(10) を2進数にする → <b>00010100</b><br>2. -80(10) の2の補数を求める。<br>   +80(10) = 01010000 → 反転：10101111 → +1：<b>10110000</b><br>3. 2つを加算する：<br>   00010100 + 10110000 = <b>11000100</b>"
+      },
+
+      // === カテゴリ5: Excel数式・関数 ===
+      {
+        id: "excel_q1",
+        category: "excel",
+        type: "text",
+        question: "セル <b>E5</b> にコードが入力されています。VLOOKUP関数を使って、役員一覧のセル範囲 <b>$A$5:$B$9</b> から対応する名前を検索し、完全一致（FALSE）で2列目の値を表示させるExcelの数式を書きなさい。",
+        answer: "=VLOOKUP(E5, $A$5:$B$9, 2, FALSE)",
+        explanation: "VLOOKUP関数の書式は <b>=VLOOKUP(検索値, 範囲, 列番号, 検索方法)</b> です。<br>1. 検索値は <b>E5</b><br>2. 範囲は絶対参照の <b>$A$5:$B$9</b><br>3. 列番号は名前が表示されている <b>2</b> 列目<br>4. 検索方法は完全一致のため <b>FALSE</b> となります。<br>したがって式は <b>=VLOOKUP(E5, $A$5:$B$9, 2, FALSE)</b> となります。"
+      },
+      {
+        id: "excel_q2",
+        category: "excel",
+        type: "text",
+        question: "アンケート結果の範囲が <b>D$6:D$15</b> にあります。この範囲の中から、セル <b>$B16</b> に入力されている条件（例: '〇'）と一致するセルの個数を数えるExcelの数式を書きなさい。（オートフィルでコピーすることを想定し、列・行の参照固定に注意すること）",
+        answer: "=COUNTIF(D$6:D$15, $B16)",
+        explanation: "COUNTIF関数の書式は <b>=COUNTIF(範囲, 条件)</b> です。<br>1. 範囲は <b>D$6:D$15</b>（コピーした際に範囲が上下にずれないよう、行番号の前に「$」をつけます）<br>2. 条件は <b>$B16</b>（コピーした際に条件列がずれないよう、列番号Bの前に「$」をつけます）<br>したがって数式は <b>=COUNTIF(D$6:D$15, $B16)</b> となります。"
+      },
+      {
+        id: "excel_q3",
+        category: "excel",
+        type: "text",
+        question: "セル <b>C6</b> に年齢が入力されています。IF関数を重ねて（ネストして）、以下の条件で料金を返すExcelの数式を書きなさい。<br>・年齢が22歳以下の場合は <b>1000</b><br>・年齢が60歳以上の場合は <b>1200</b><br>・それ以外（23〜59歳）の場合は <b>1500</b>",
+        answer: "=IF(C6<=22, 1000, IF(C6>=60, 1200, 1500))",
+        altAnswers: ["=IF(C6>=60, 1200, IF(C6<=22, 1000, 1500))", "=IF(C6<=22, 1000, IF(C6<60, 1500, 1200))"],
+        explanation: "IF関数をネスト（入れ子）にする問題です。書式は <b>=IF(条件1, 真の場合1, IF(条件2, 真の場合2, 偽の場合2))</b> です。<br>1. 最初の条件 <b>C6<=22</b> が真なら <b>1000</b><br>2. 偽の場合にさらにIF関数を入れ、条件 <b>C6>=60</b> が真なら <b>1200</b>、それ以外なら <b>1500</b> とします。<br>したがって数式は <b>=IF(C6<=22, 1000, IF(C6>=60, 1200, 1500))</b> となります。"
       }
     ];
 
@@ -1217,6 +1244,7 @@
         if (cat === 'conversion') return tab.textContent.includes('2.');
         if (cat === 'operation') return tab.textContent.includes('3.');
         if (cat === 'complement') return tab.textContent.includes('4.');
+        if (cat === 'excel') return tab.textContent.includes('5.');
       });
       if (activeTab) activeTab.classList.add('active');
 
@@ -1238,15 +1266,31 @@
 
     function normalizeAnswerString(str) {
       if (!str) return "";
+      
+      // 全角英数字を半角に変換
       let norm = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
         return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
       });
+      
+      // 全角カンマ・スペースの統一と除去
       norm = norm.replace(/，/g, ",").replace(/\s+/g, "").toLowerCase();
+      
+      // Excel用追加正規化
+      norm = norm.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+      norm = norm.replace(/：/g, ":");
+      
+      // 2進数・10進数・16進数の基数文字の除去
       norm = norm.replace(/\((2|10|16|2進数|10進数|16進数|２|１０|１６)\)$/, "");
       norm = norm.replace(/_(2|10|16)$/, "");
       norm = norm.replace(/2進数$/, "").replace(/10進数$/, "").replace(/16進数$/, "");
+      
+      // 16進数のプレフィックス「0x」「h」などの除去
       norm = norm.replace(/^0x/, "");
       norm = norm.replace(/h$/, "");
+
+      // Excel式の先頭 "=" を除去して統一
+      norm = norm.replace(/^=/, "");
+
       return norm;
     }
 
@@ -1330,13 +1374,13 @@
       if (q.category === "conversion") catName = "n進法変換";
       if (q.category === "operation") catName = "2進数演算";
       if (q.category === "complement") catName = "補数表記";
+      if (q.category === "excel") catName = "Excel関数";
 
       let optionsHTML = '';
       if (q.type === 'choice') {
         optionsHTML = `<div class="options-grid">`;
         q.options.forEach((opt, oIdx) => {
           const optId = `opt-${q.id}-${oIdx}`;
-          // 復習モードで解き直すために、不正解の状態なら入力を解放する
           const checked = isCompleted && isCompleted.userAnswer === opt ? 'checked' : '';
           const disabled = isCompleted && isCompleted.isCorrect ? 'disabled' : '';
           optionsHTML += `
@@ -1352,7 +1396,7 @@
         const disabled = isCompleted && isCompleted.isCorrect ? 'disabled' : '';
         optionsHTML = `
           <div class="input-container">
-            <input type="text" id="input-${q.id}" class="text-input" placeholder="解答を入力してください" value="${userVal}" ${disabled} onkeypress="handleInputEnter(event, '${q.id}')">
+            <input type="text" id="input-${q.id}" class="text-input" placeholder="数式を入力してください (例: =SUM(A1:A5))" value="${userVal}" ${disabled} onkeypress="handleInputEnter(event, '${q.id}')">
           </div>
         `;
       }
@@ -1581,6 +1625,8 @@
       } else {
         if (q.keywords) {
           isCorrect = checkKeywordMatch(normalizedUser, q.keywords) || normalizedUser === normalizedSystem;
+        } else if (q.altAnswers) {
+          isCorrect = normalizedUser === normalizedSystem || q.altAnswers.map(normalizeAnswerString).includes(normalizedUser);
         } else {
           isCorrect = normalizedUser === normalizedSystem;
         }
@@ -1631,7 +1677,7 @@
       
       let correctCount = 0;
       tableKeys.forEach(k => {
-        if (normalizeAnswerString(answersToSave[k]) === normalizeAnswerString(tableAnswers[k])) {
+        if (normalizeAnswerString(userProgress.tableAnswers[k]) === normalizeAnswerString(tableAnswers[k])) {
           correctCount++;
         }
       });
@@ -1687,7 +1733,6 @@
         tempSelectedOptions = {};
         saveProgress();
         
-        // 復習モードを無効化
         reviewModeActive = false;
         const btn = document.getElementById('toggleReviewBtn');
         btn.classList.remove('mode-switch-active');

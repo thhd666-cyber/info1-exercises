@@ -280,15 +280,15 @@
 
     .selector-tab {
       flex: 1;
-      min-width: 160px;
+      min-width: 150px;
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 0.8rem 1rem;
+      padding: 0.8rem 0.8rem;
       border-radius: 12px;
       cursor: pointer;
       font-weight: 500;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: var(--transition-smooth);
       text-align: center;
     }
@@ -584,7 +584,6 @@
       font-size: 0.85rem;
     }
 
-    /* 画面切り替え時のスムーズ表示 */
     .hidden {
       display: none !important;
     }
@@ -699,6 +698,7 @@
       <button class="selector-tab" onclick="switchCategory('conversion')">2. n進法の基礎・変換</button>
       <button class="selector-tab" onclick="switchCategory('operation')">3. 2進数の加減乗除</button>
       <button class="selector-tab" onclick="switchCategory('complement')">4. 補数表記と整数</button>
+      <button class="selector-tab" onclick="switchCategory('excel')">5. Excel数式・関数</button>
     </div>
 
     <!-- 問題リストエリア -->
@@ -715,12 +715,12 @@
 
     <!-- フッター -->
     <footer>
-      <p>© 2026 情報Ⅰ 学習サポートシステム | Set 2 (範囲: 解説書p.1-p.33 & 2進法演習問題1)</p>
+      <p>© 2026 情報Ⅰ 学習サポートシステム | Set 2 (範囲: 解説書p.1-p.33 & 2進法演習問題1 & Excel解説書)</p>
     </footer>
   </div>
 
   <script>
-    // 演習問題データベース (Set 2: 全38問)
+    // 演習問題データベース (Set 2: 全41問)
     const quizDatabase = [
       // === カテゴリ1: コンピュータの構成要素と装置 ===
       {
@@ -782,7 +782,7 @@
         id: "s2_q6",
         category: "basic",
         type: "choice",
-        question: "CPUを構成する装置のうち、主記憶装置（メモリ）からプログラムの命令を1つずつ取り出して「解釈」し、各装置に動作의 指示を出す役割を持つものはどれですか？",
+        question: "CPUを構成する装置のうち、主記憶装置（メモリ）からプログラムの命令を1つずつ取り出して「解釈」し、各装置に動作の指示を出す役割を持つものはどれですか？",
         options: ["制御装置", "演算装置", "入力装置", "補助記憶装置"],
         answer: "制御装置",
         explanation: "CPU内の「制御装置」はプログラム命令を解釈し、全体の動作を指揮・コントロールします。一方、実際にデータの四則演算や比較を行うのは「演算装置」です。"
@@ -1058,6 +1058,33 @@
         question: "8ビットの2の補数表現において、減算 <b>15(10) - 40(10)</b> を加算形式で計算した結果の8ビット2進数を答えなさい。",
         answer: "11100111",
         explanation: "15 - 40 = -25 です。-25の8ビット補数を求めます：<br>1. +25(10) を2進数にする → 25 = 16+8+1 = <b>00011001</b><br>2. ビットを反転：11100110<br>3. 1を加える：<b>11100111</b>"
+      },
+
+      // === カテゴリ5: Excel数式・関数 ===
+      {
+        id: "s2_excel_q1",
+        category: "excel",
+        type: "text",
+        question: "セル <b>E8</b> にコードが入力されています。VLOOKUP関数を使って、役員一覧のセル範囲 <b>$A$10:$C$20</b> から対応する役職名を検索し、完全一致（FALSE）で3列目の値を表示させるExcelの数式を書きなさい。",
+        answer: "=VLOOKUP(E8, $A$10:$C$20, 3, FALSE)",
+        explanation: "VLOOKUP関数の書式は <b>=VLOOKUP(検索値, 範囲, 列番号, 検索方法)</b> です。<br>1. 検索値は <b>E8</b><br>2. 範囲は絶対参照の <b>$A$10:$C$20</b><br>3. 列番号は <b>3</b> 列目<br>4. 検索方法は完全一致のため <b>FALSE</b> となります。<br>したがって式は <b>=VLOOKUP(E8, $A$10:$C$20, 3, FALSE)</b> となります。"
+      },
+      {
+        id: "s2_excel_q2",
+        category: "excel",
+        type: "text",
+        question: "アンケート結果の範囲が <b>$E$6:$E$20</b> にあります。この範囲の中から、セル <b>$B18</b> に入力されている条件と一致するセルの個数を数えるExcelの数式を書きなさい。（オートフィルでコピーすることを想定し、列・行の参照固定に注意すること）",
+        answer: "=COUNTIF($E$6:$E$20, $B18)",
+        explanation: "COUNTIF関数の書式は <b>=COUNTIF(範囲, 条件)</b> です。<br>1. 範囲は <b>$E$6:$E$20</b>（コピーしても列・行が移動しないよう絶対参照にします）<br>2. 条件は <b>$B18</b>（コピーしてもB列を固定したまま行だけ変化させるためBの前に「$」をつけます）<br>したがって数式は <b>=COUNTIF($E$6:$E$20, $B18)</b> となります。"
+      },
+      {
+        id: "s2_excel_q3",
+        category: "excel",
+        type: "text",
+        question: "セル <b>D4</b> にテストの点数が入力されています。IF関数を重ねて（ネストして）、以下の条件で評価ランクを返すExcelの数式を書きなさい。<br>・点数が90点以上の場合は <b>\"A\"</b><br>・点数が60点以上の場合は <b>\"B\"</b><br>・それ以外（59点以下）の場合は <b>\"C\"</b>",
+        answer: "=IF(D4>=90, \"A\", IF(D4>=60, \"B\", \"C\"))",
+        altAnswers: ["=IF(D4<60, \"C\", IF(D4>=90, \"A\", \"B\"))", "=IF(D4<60, \"C\", IF(D4<90, \"B\", \"A\"))", "=IF(D4>=60, IF(D4>=90, \"A\", \"B\"), \"C\")"],
+        explanation: "IF関数をネスト（入れ子）にする問題です。書式は <b>=IF(条件1, 真の場合1, IF(条件2, 真の場合2, 偽の場合2))</b> です。<br>1. 最初の条件 <b>D4>=90</b> が真なら <b>\"A\"</b><br>2. 偽の場合にさらにIF関数を入れ、条件 <b>D4>=60</b> が真なら <b>\"B\"</b>、それ以外なら <b>\"C\"</b> とします。<br>したがって数式は <b>=IF(D4>=90, \"A\", IF(D4>=60, \"B\", \"C\"))</b> となります。"
       }
     ];
 
@@ -1181,6 +1208,7 @@
         if (cat === 'conversion') return tab.textContent.includes('2.');
         if (cat === 'operation') return tab.textContent.includes('3.');
         if (cat === 'complement') return tab.textContent.includes('4.');
+        if (cat === 'excel') return tab.textContent.includes('5.');
       });
       if (activeTab) activeTab.classList.add('active');
 
@@ -1202,15 +1230,31 @@
 
     function normalizeAnswerString(str) {
       if (!str) return "";
+      
+      // 全角英数字を半角に変換
       let norm = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
         return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
       });
+      
+      // 全角カンマ・スペースの統一と除去
       norm = norm.replace(/，/g, ",").replace(/\s+/g, "").toLowerCase();
+      
+      // Excel用追加正規化
+      norm = norm.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+      norm = norm.replace(/：/g, ":");
+      
+      // 2進数・10進数・16進数の基数文字の除去
       norm = norm.replace(/\((2|10|16|2進数|10進数|16進数|２|１０|１６)\)$/, "");
       norm = norm.replace(/_(2|10|16)$/, "");
       norm = norm.replace(/2進数$/, "").replace(/10進数$/, "").replace(/16進数$/, "");
+      
+      // 16進数のプレフィックス「0x」「h」などの除去
       norm = norm.replace(/^0x/, "");
       norm = norm.replace(/h$/, "");
+
+      // Excel式の先頭 "=" を除去して統一
+      norm = norm.replace(/^=/, "");
+
       return norm;
     }
 
@@ -1292,6 +1336,7 @@
       if (q.category === "conversion") catName = "n進法変換";
       if (q.category === "operation") catName = "2進数演算";
       if (q.category === "complement") catName = "補数表記";
+      if (q.category === "excel") catName = "Excel関数";
 
       let optionsHTML = '';
       if (q.type === 'choice') {
@@ -1313,7 +1358,7 @@
         const disabled = isCompleted && isCompleted.isCorrect ? 'disabled' : '';
         optionsHTML = `
           <div class="input-container">
-            <input type="text" id="input-${q.id}" class="text-input" placeholder="解答を入力してください" value="${userVal}" ${disabled} onkeypress="handleInputEnter(event, '${q.id}')">
+            <input type="text" id="input-${q.id}" class="text-input" placeholder="数式を入力してください (例: =SUM(A1:A5))" value="${userVal}" ${disabled} onkeypress="handleInputEnter(event, '${q.id}')">
           </div>
         `;
       }
@@ -1531,6 +1576,7 @@
         }
       }
 
+      // 正誤判定ロジック
       let isCorrect = false;
       const normalizedUser = normalizeAnswerString(userAnswer);
       const normalizedSystem = normalizeAnswerString(q.answer);
@@ -1540,19 +1586,24 @@
       } else {
         if (q.keywords) {
           isCorrect = checkKeywordMatch(normalizedUser, q.keywords) || normalizedUser === normalizedSystem;
+        } else if (q.altAnswers) {
+          isCorrect = normalizedUser === normalizedSystem || q.altAnswers.map(normalizeAnswerString).includes(normalizedUser);
         } else {
           isCorrect = normalizedUser === normalizedSystem;
         }
       }
 
+      // スコア計算 (正答状況の新規判定)
       const prevAns = userProgress.completedAnswers[q.id];
       const previouslyCorrect = prevAns && prevAns.isCorrect;
       
+      // 進捗データの更新
       userProgress.completedAnswers[q.id] = {
         isCorrect: isCorrect,
         userAnswer: userAnswer
       };
 
+      // スコアの更新 (これまで未正解だったものを正解した場合のみ加算)
       if (isCorrect && !previouslyCorrect) {
         userProgress.score += 10;
       } else if (!isCorrect && previouslyCorrect) {
@@ -1587,7 +1638,7 @@
       
       let correctCount = 0;
       tableKeys.forEach(k => {
-        if (normalizeAnswerString(answersToSave[k]) === normalizeAnswerString(tableAnswers[k])) {
+        if (normalizeAnswerString(userProgress.tableAnswers[k]) === normalizeAnswerString(tableAnswers[k])) {
           correctCount++;
         }
       });
